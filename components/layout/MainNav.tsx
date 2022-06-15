@@ -1,8 +1,13 @@
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import styles from './MainNav.module.scss';
 import ModeChangeBtn from './ModeChageBtn';
 
 const MainNav = () => {
+  const router = useRouter();
+  function writeBtnHandler() {
+    router.push('/write');
+  }
   return (
     <nav className={styles.nav}>
       <div className={styles.innerNav}>
@@ -13,7 +18,9 @@ const MainNav = () => {
         </div>
         <div className={styles.btns}>
           <ModeChangeBtn />
-          <button className={styles['new-post-btn']}>New</button>
+          <button className={styles['new-post-btn']} onClick={writeBtnHandler}>
+            New
+          </button>
         </div>
       </div>
     </nav>
