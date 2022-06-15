@@ -13,14 +13,14 @@ const postDetail = (props: IPostDetailProps) => {
 export const getStaticPaths: GetStaticPaths = async () => {
   return {
     fallback: 'blocking',
-    paths: [{ params: { id: '124' } }],
+    paths: [{ params: { userId: 'a', postId: '124' } }],
   };
 };
 
 export const getStaticProps: GetStaticProps = async (ctx) => {
   console.log(ctx);
   return {
-    props: { params: ctx.params!.id },
+    props: { params: { postId: ctx.params!.postId } },
   };
 };
 
