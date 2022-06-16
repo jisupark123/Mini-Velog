@@ -1,19 +1,32 @@
 import TitleInput from './TiltleInput';
 import styles from './newPostForm.module.scss';
-import { useRef } from 'react';
+import React, { useRef } from 'react';
+import { IPost } from '../../models/Post';
 
-const NewPostForm = () => {
-  function postUploadHandler() {
-    const titleInput = titleInputRef.current!.value;
-    const contentsInput = contentsInputRef.current!.value;
-  }
+interface INewPostFormProps {
+  onUploadPost: (newPost: IPost) => void;
+}
+
+const NewPostForm: React.FC<INewPostFormProps> = (props) => {
   const titleInputRef = useRef<HTMLTextAreaElement>(null);
   const contentsInputRef = useRef<HTMLTextAreaElement>(null);
+
+  function submitHandler() {
+    const title = titleInputRef.current!.value;
+    const contents = contentsInputRef.current!.value;
+    // validate
+    const newPost: IPost = {
+      title,
+      contents,
+    };
+    props.onUploadPost(newPost);
+  }
+
   return (
     <div className={styles.wrapper}>
       <textarea ref={titleInputRef} className={styles.title}></textarea>
       <textarea ref={contentsInputRef} className={styles['main-contents']}></textarea>
-      <button onClick={postUploadHandler}>업로드</button>
+      <button onClick={submitHandler}>업로드</button>
     </div>
   );
 };

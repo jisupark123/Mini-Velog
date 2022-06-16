@@ -1,5 +1,10 @@
 import mongoose from 'mongoose';
 
+export interface IPost {
+  title: string;
+  contents: string;
+}
+
 const postSchema = new mongoose.Schema({
   title: { type: String, required: true, trim: true },
   //   fileUrl: { type: String },
