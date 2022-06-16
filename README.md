@@ -18,8 +18,11 @@ facebook 같이 다양한 기능과 velog 같이 깔끔한 UI를 가진 미니 S
 
 ### User
 
-/[userId] -> User Dashboard
-/[userId]/[postId] -> 게시물 보기 (중요)
+/users/[userId] -> User Dashboard
+
+### Post
+
+/posts/[postId] -> 게시물 보기 (중요)
 
 ### API
 
