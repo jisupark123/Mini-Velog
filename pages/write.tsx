@@ -1,11 +1,8 @@
-import styles from './Write.module.scss';
+import NewPostForm from '../components/newPost/NewPostForm';
+import styles from './write.module.scss';
 
 const Write = () => {
-  return (
-    <div className={styles.wrapper}>
-      <textarea className={styles.title}></textarea>
-    </div>
-  );
+  return <NewPostForm />;
 };
 
 export default Write;

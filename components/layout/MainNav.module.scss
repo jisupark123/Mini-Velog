@@ -2,7 +2,7 @@
   height: 6.5rem;
 }
 .innerNav {
-  width: $multi-post-max;
+  width: $desktop-nav-width;
   height: 100%;
   @include flex-between;
   margin: 0 auto;
