@@ -1,10 +1,10 @@
-import NewPostForm from '../components/newPost/NewPostForm';
-import { IPost } from '../models/Post';
-import styles from './write.module.scss';
+import NewPostForm from '../../components/newPost/NewPostForm';
+import { IPost } from '../../models/Post';
+import styles from './upload.module.scss';
 
 const Write = () => {
   async function uploadPostHandler(newPost: IPost) {
-    await fetch('/api/new-post', {
+    await fetch('/api/posts', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

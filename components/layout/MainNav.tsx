@@ -6,7 +6,7 @@ import ModeChangeBtn from './ModeChageBtn';
 const MainNav = () => {
   const router = useRouter();
   function writeBtnHandler() {
-    router.push('/write');
+    router.push('/posts/upload');
   }
   return (
     <nav className={styles.nav}>
@@ -18,7 +18,8 @@ const MainNav = () => {
         </div>
         <div className={styles.btns}>
           <ModeChangeBtn />
-          <button className={styles['new-post-btn']} onClick={writeBtnHandler}>
+
+          <button className={styles['post-upload-btn']} onClick={writeBtnHandler}>
             New
           </button>
         </div>
