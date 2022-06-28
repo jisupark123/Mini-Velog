@@ -1,5 +1,5 @@
-import TitleInput from './TiltleInput';
-import styles from './newPostForm.module.scss';
+import TitleInput from './tiltle-input';
+import styles from './new-post-form.module.module.scss';
 import React, { useRef } from 'react';
 import { IPost } from '../../models/Post';
 

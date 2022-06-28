@@ -21,10 +21,11 @@ facebook 같이 다양한 기능과 velog 같이 깔끔한 UI를 가진 미니 S
 
 ### Post
 
-/posts/[postId] -> 게시물 보기 (중요)
+/posts/[id] -> 게시물 보기 (중요)
 /posts/upload -> 새 글 작성 - 사진 하나에 멘트, 태그달기 (중요)
 
 ### API
 
-/api/posts(post) -> 새 게시글 생성
+/api/posts(POST) -> 새 게시글 생성
 /api/posts/[id]/comments -> 게시글에 댓글 작성
+/api/users/kakao-login

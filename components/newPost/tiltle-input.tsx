@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './TitleInput.module.scss';
+import styles from './title-input.module.scss';
 
 interface ITitleInputProps {
   placeholder: string;

@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import styles from './MainNav.module.scss';
-import ModeChangeBtn from './ModeChageBtn';
+import styles from './main-nav.module.scss';
+import ModeChangeBtn from './mode-change-btn';
 
 const MainNav = () => {
   const router = useRouter();

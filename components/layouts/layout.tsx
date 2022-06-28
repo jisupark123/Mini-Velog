@@ -1,6 +1,7 @@
 import React from 'react';
-import MainNav from './MainNav';
-import styles from './Layout.module.scss';
+import MainNav from './main-nav';
+import styles from './layout.module.scss';
+import Script from 'next/script';
 
 type Props = { children: React.ReactNode };
 
