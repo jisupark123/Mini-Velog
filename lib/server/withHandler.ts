@@ -5,6 +5,9 @@ interface ConfigType {
   methods: method[];
   handler: (req: NextApiRequest, res: NextApiResponse) => void;
 }
+/**
+ * 회원 전용 페이지인지 확인하고, try,catch 같은 진부한 코드를 처리한다.
+ */
 function withHandler({ methods, handler }: ConfigType) {
   return async function (
     req: NextApiRequest,
