@@ -6,7 +6,8 @@ interface ConfigType {
   handler: (req: NextApiRequest, res: NextApiResponse) => void;
 }
 /**
- * 회원 전용 페이지인지 확인하고, try,catch 같은 진부한 코드를 처리한다.
+ * 올바른 method인지 확인하고, try,catch 같은 진부한 코드를 처리한다.
+ * @param {methods('GET' | 'POST' | 'DELETE'),handler(handler)}
  */
 function withHandler({ methods, handler }: ConfigType) {
   return async function (
@@ -18,7 +19,7 @@ function withHandler({ methods, handler }: ConfigType) {
       return res.status(405).end();
     }
     try {
-      await handler;
+      await handler(req, res);
     } catch (error) {
       console.log(error);
       return res.status(500).json({ error });

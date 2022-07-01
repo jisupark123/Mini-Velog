@@ -13,8 +13,12 @@
 .btns {
   display: flex;
   align-items: center;
+  button {
+    margin-right: 1rem;
+    font-size: 2rem;
+  }
 }
 .post-upload-btn {
-  margin-right: 1rem;
-  font-size: 2rem;
+  // margin-right: 1rem;
+  // font-size: 2rem;
 }

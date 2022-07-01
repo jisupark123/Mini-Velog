@@ -5,8 +5,8 @@ import ModeChangeBtn from './mode-change-btn';
 
 const MainNav = () => {
   const router = useRouter();
-  function writeBtnHandler() {
-    router.push('/posts/upload');
+  function onBtnClick(url: string) {
+    router.push(url);
   }
   return (
     <nav className={styles.nav}>
@@ -18,10 +18,10 @@ const MainNav = () => {
         </div>
         <div className={styles.btns}>
           <ModeChangeBtn />
-
-          <button className={styles['post-upload-btn']} onClick={writeBtnHandler}>
+          <button className={styles['post-upload-btn']} onClick={() => onBtnClick('/posts/upload')}>
             New
           </button>
+          <button onClick={() => onBtnClick('/login')}>로그인</button>
         </div>
       </div>
     </nav>

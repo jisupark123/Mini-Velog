@@ -1,4 +1,4 @@
-import NewPostForm from '../../components/newPost/NewPostForm';
+import NewPostForm from '../../components/newPost/new-post-form';
 import { IPost } from '../../models/Post';
 import styles from './upload.module.scss';
 
