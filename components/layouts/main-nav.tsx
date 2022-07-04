@@ -8,6 +8,7 @@ const MainNav = () => {
   function onBtnClick(url: string) {
     router.push(url);
   }
+
   return (
     <nav className={styles.nav}>
       <div className={styles.innerNav}>
@@ -18,7 +19,10 @@ const MainNav = () => {
         </div>
         <div className={styles.btns}>
           <ModeChangeBtn />
-          <button className={styles['post-upload-btn']} onClick={() => onBtnClick('/posts/upload')}>
+          <button
+            className={styles['post-upload-btn']}
+            onClick={() => onBtnClick('/posts/upload')}
+          >
             New
           </button>
           <button onClick={() => onBtnClick('/login')}>로그인</button>

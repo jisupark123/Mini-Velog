@@ -1,6 +1,11 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+enum LoggedFrom {
+  Kakao
+  Naver
+}
+
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["referentialIntegrity"]
@@ -12,9 +17,48 @@ datasource db {
   referentialIntegrity = "prisma"
 }
 
+model User {
+  id           Int        @id @default(autoincrement())
+  name         String
+  createdAt    DateTime   @default(now())
+  kakaoId      BigInt     @unique
+  loggedFrom   LoggedFrom
+  profileImage String?
+  session      Session?
+  posts        Post[]
+  comments     Comment[]
+}
+
+model Session {
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int      @unique
+  kakaoId   BigInt   @unique
+  sessionId String   @unique
+}
+
 model Post {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  comments  Comment[]
+  title     String
+  contents  String    @db.VarChar(2000)
+
+  @@index([userId])
+}
+
+model Comment {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
-  title     String
-  contents  String   @db.VarChar(2000)
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    Int
+
+  @@index([userId])
+  @@index([postId])
 }

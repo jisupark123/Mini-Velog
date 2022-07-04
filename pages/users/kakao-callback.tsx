@@ -5,7 +5,7 @@ const KakaoCallback = () => {
   const router = useRouter();
   const { code: authCode, error } = router.query;
   async function sendAuthCode(code: string | string[]) {
-    await fetch('/api/users/kakao-login', {
+    const response = await fetch('/api/users/kakao-login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -14,6 +14,10 @@ const KakaoCallback = () => {
         authCode: code,
       }),
     });
+    if (!response.ok) {
+      alert('에러');
+    }
+    router.push('/');
   }
   useEffect(() => {
     if (authCode) {

@@ -4,7 +4,7 @@ import { withIronSessionApiRoute, withIronSessionSsr } from 'iron-session/next';
 declare module 'iron-session' {
   interface IronSessionData {
     user?: {
-      id: number;
+      id: string;
     };
   }
 }
@@ -14,6 +14,8 @@ const cookieConfig: IronSessionOptions = {
   password: process.env.COOKIE_PASSWORD!,
   cookieOptions: {
     secure: process.env.NODE_ENV === 'production',
+    maxAge: 60 * 1, // 2분,
+    // httpOnly:true
   },
 };
 
