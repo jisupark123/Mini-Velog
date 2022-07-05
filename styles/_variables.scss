@@ -1,2 +1,8 @@
 $basic-font-size: 1.6rem;
 $desktop-nav-width: 800px;
+$nav-height: 6.5rem;
+$main-height: calc(100vh - $nav-height);
+
+// colors
+
+$bg--main-page: #f8f9fa;

@@ -1,5 +1,9 @@
 .nav {
-  height: 6.5rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: $nav-height;
 }
 .innerNav {
   width: $desktop-nav-width;

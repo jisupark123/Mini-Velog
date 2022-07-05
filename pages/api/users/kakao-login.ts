@@ -35,7 +35,7 @@ const handler = async (
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
   }).then((res) => res.json());
-  // console.log(tokenResponse);
+
   const userInfoUrl = 'https://kapi.kakao.com/v2/user/me';
   const userInfo: UserInfo = await fetch(userInfoUrl, {
     headers: {
@@ -48,8 +48,7 @@ const handler = async (
       console.log(error);
       return res.status(401).json({ ok: false, error });
     });
-  // const {} =
-  // console.log(userInfo);
+
   const {
     id: kakaoId,
     properties: { nickname, profile_image, thumbnail_image },
@@ -106,7 +105,7 @@ const handler = async (
 
   req.session.user = { id: newSessionId };
   await req.session.save();
-  res.json({ ok: true });
+  return res.json({ ok: true });
 
   // const { token_type, access_token, expires_in, refresh_token, refresh_token_expires_in } =
   //   req.body;

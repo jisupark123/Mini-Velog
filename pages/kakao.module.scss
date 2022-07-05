@@ -1,0 +1,20 @@
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: $bg--main-page;
+}
+.main {
+  @include page-config;
+  display: flex;
+  justify-content: center;
+  padding-top: 10rem;
+  padding-bottom: 20rem;
+}
+.msg-box {
+  @include flex-center;
+  h2 {
+    font-size: 3rem;
+  }
+}

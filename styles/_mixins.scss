@@ -1,3 +1,8 @@
+@mixin page-config {
+  height: $main-height;
+  margin-top: $nav-height;
+}
+
 @mixin flex-center {
   display: flex;
   justify-content: center;

@@ -1,4 +1,5 @@
 import KakaoBtn from '../components/btn/kakao-btn';
+import styles from './login.module.scss';
 
 const Login = () => {
   async function kakaoLogin() {
@@ -13,7 +14,7 @@ const Login = () => {
     // });
 
     window.Kakao.Auth.authorize({
-      redirectUri: 'http://localhost:3000/users/kakao-callback',
+      redirectUri: 'http://localhost:3000/kakao',
     });
   }
   // async function onSuccess(res: IAuthObj) {
@@ -33,12 +34,12 @@ const Login = () => {
   // }
   function plusAgree() {
     window.Kakao.Auth.authorize({
-      redirectUri: 'http://localhost:3000/users/kakao-callback',
+      redirectUri: 'http://localhost:3000/kakao',
       scope: 'profile_image',
     });
   }
   return (
-    <div>
+    <div className={styles.container}>
       <KakaoBtn title='카카오 로그인' onClickBtn={kakaoLogin} />
       <button onClick={plusAgree}>추가 항목 동의</button>
     </div>
