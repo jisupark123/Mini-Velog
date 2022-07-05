@@ -2,36 +2,12 @@ import KakaoBtn from '../components/btn/kakao-btn';
 import styles from './login.module.scss';
 
 const Login = () => {
-  async function kakaoLogin() {
-    // window.Kakao.Auth.login({
-    //   success: function (authObj: IAuthObj) {
-    //     console.log(authObj);
-    //     onSuccess(authObj);
-    //   },
-    //   fail: function (err: any) {
-    //     console.log(err);
-    //   },
-    // });
-
+  function kakaoLogin() {
     window.Kakao.Auth.authorize({
       redirectUri: 'http://localhost:3000/kakao',
     });
   }
-  // async function onSuccess(res: IAuthObj) {
-  //   await fetch('/api/users/kakao-login', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify({
-  //       token_type: res.token_type,
-  //       access_token: res.access_token,
-  //       expires_in: res.expires_in,
-  //       refresh_token: res.refresh_token,
-  //       refresh_token_expires_in: res.refresh_token_expires_in,
-  //     }),
-  //   });
-  // }
+
   function plusAgree() {
     window.Kakao.Auth.authorize({
       redirectUri: 'http://localhost:3000/kakao',

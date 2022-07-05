@@ -28,7 +28,7 @@ function withHandler({ methods, handler }: ConfigType) {
       await handler(req, res);
     } catch (error) {
       console.log(error);
-      return res.status(500).json({ error });
+      return res.status(500).json({ ok: false, error });
     }
   };
 }

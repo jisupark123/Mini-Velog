@@ -1,5 +1,5 @@
 import TitleInput from './tiltle-input';
-import styles from './new-post-form.module.module.scss';
+import styles from './new-post-form.module.scss';
 import React, { useRef } from 'react';
 import { IPost } from '../../models/Post';
 
@@ -25,7 +25,10 @@ const NewPostForm: React.FC<INewPostFormProps> = (props) => {
   return (
     <div className={styles.wrapper}>
       <textarea ref={titleInputRef} className={styles.title}></textarea>
-      <textarea ref={contentsInputRef} className={styles['main-contents']}></textarea>
+      <textarea
+        ref={contentsInputRef}
+        className={styles['main-contents']}
+      ></textarea>
       <button onClick={submitHandler}>업로드</button>
     </div>
   );

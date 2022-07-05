@@ -35,7 +35,6 @@ const Kakao: NextPage = () => {
 
   useEffect(() => {
     if (authCode) {
-      console.log('시작');
       loginHandler(authCode);
     } else if (kakaoServerError) {
       router.push('/notifications/authentication-failed');

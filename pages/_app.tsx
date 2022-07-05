@@ -1,6 +1,5 @@
 import '../styles/reset.scss';
 import '../styles/globals.scss';
-// import '../styles/_variables.scss';
 import type { AppProps } from 'next/app';
 import Layout from '../components/layouts/layout';
 import Script from 'next/script';
@@ -19,7 +18,10 @@ function App({ Component, pageProps }: AppProps) {
   return (
     <Layout>
       <Component {...pageProps} />
-      <Script src='https://developers.kakao.com/sdk/js/kakao.js' onLoad={kakaoInit}></Script>
+      <Script
+        src='https://developers.kakao.com/sdk/js/kakao.js'
+        onLoad={kakaoInit}
+      ></Script>
     </Layout>
   );
 }

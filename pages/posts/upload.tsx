@@ -12,7 +12,11 @@ const Write = () => {
       body: JSON.stringify(newPost),
     });
   }
-  return <NewPostForm onUploadPost={uploadPostHandler} />;
+  return (
+    <div className={styles.container}>
+      <NewPostForm onUploadPost={uploadPostHandler} />
+    </div>
+  );
 };
 
 export default Write;
