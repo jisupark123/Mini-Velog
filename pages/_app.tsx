@@ -1,8 +1,12 @@
 import '../styles/reset.scss';
 import '../styles/globals.scss';
 import type { AppProps } from 'next/app';
-import Layout from '../components/layouts/layout';
 import Script from 'next/script';
+import { mutate, SWRConfig } from 'swr';
+import UserProvider from '../store/user-provider';
+import { useContext, useEffect } from 'react';
+import UserCtx from '../store/user-context';
+import useUser from '../lib/client/useUser';
 
 declare global {
   interface Window {
@@ -16,13 +20,18 @@ function App({ Component, pageProps }: AppProps) {
   }
 
   return (
-    <Layout>
+    <SWRConfig
+      value={{
+        fetcher: (url: string) =>
+          fetch(url).then((response) => response.json()),
+      }}
+    >
       <Component {...pageProps} />
       <Script
         src='https://developers.kakao.com/sdk/js/kakao.js'
         onLoad={kakaoInit}
       ></Script>
-    </Layout>
+    </SWRConfig>
   );
 }
 

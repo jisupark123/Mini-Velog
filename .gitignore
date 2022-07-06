@@ -37,3 +37,7 @@ yarn-error.log*
 
 # secret function
 /lib/secret/*
+
+# useless
+
+/store/

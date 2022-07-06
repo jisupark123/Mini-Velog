@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
+import useUser from '../../lib/client/useUser';
+import UserCtx from '../../store/user-context';
 import styles from './main-nav.module.scss';
 import ModeChangeBtn from './mode-change-btn';
 
@@ -9,10 +11,13 @@ interface MainNavProps {
 }
 
 const MainNav: React.FC<MainNavProps> = ({ onlyLogo = false }) => {
+  const { user } = useUser();
   const router = useRouter();
+
   function onBtnClick(url: string) {
     router.push(url);
   }
+  function logoutHandler() {}
 
   return (
     <nav className={styles.nav}>
@@ -25,13 +30,22 @@ const MainNav: React.FC<MainNavProps> = ({ onlyLogo = false }) => {
         {!onlyLogo && (
           <div className={styles.btns}>
             <ModeChangeBtn />
-            <button
-              className={styles['post-upload-btn']}
-              onClick={() => onBtnClick('/posts/upload')}
-            >
-              New
-            </button>
-            <button onClick={() => onBtnClick('/login')}>로그인</button>
+            {user && (
+              <button
+                className={styles['post-upload-btn']}
+                onClick={() => onBtnClick('/posts/upload')}
+              >
+                New
+              </button>
+            )}
+            {!user && (
+              <button onClick={() => onBtnClick('/login')}>로그인</button>
+            )}
+            {user && (
+              <button onClick={() => onBtnClick('/api/users/logout')}>
+                로그아웃
+              </button>
+            )}
           </div>
         )}
       </div>

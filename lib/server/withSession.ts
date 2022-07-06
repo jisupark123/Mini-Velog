@@ -14,7 +14,7 @@ const cookieConfig: IronSessionOptions = {
   password: process.env.COOKIE_PASSWORD!,
   cookieOptions: {
     secure: process.env.NODE_ENV === 'production',
-    maxAge: 60 * 1, // 2분,
+    // maxAge: 60 * 1, // 2분,
     // httpOnly:true
   },
 };

@@ -1,7 +1,9 @@
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useContext, useEffect } from 'react';
 import MainNav from '../components/layouts/main-nav';
+import useUser from '../lib/client/useUser';
+import UserCtx from '../store/user-context';
 import styles from './kakao.module.scss';
 
 interface ResponseType {
@@ -10,6 +12,7 @@ interface ResponseType {
 }
 
 const Kakao: NextPage = () => {
+  const { mutate } = useUser();
   const router = useRouter();
   const { code: authCode, error: kakaoServerError } = router.query;
 
@@ -25,12 +28,13 @@ const Kakao: NextPage = () => {
         }),
       }).then((res) => res.json());
       if (response.ok) {
+        mutate();
         router.push('/');
       } else {
         router.push('/notifications/authentication-failed');
       }
     },
-    [router]
+    [router, mutate]
   );
 
   useEffect(() => {
