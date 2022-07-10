@@ -1,7 +1,8 @@
 import React from 'react';
+import Layout from '../../components/layouts/layout';
 
 const authenticationFailed = () => {
-  return <div>authenticationFailed</div>;
+  return <Layout>authenticationFailed</Layout>;
 };
 
 export default authenticationFailed;
