@@ -1,0 +1,19 @@
+.container {
+  width: 100%;
+  height: 100%;
+  .row1 {
+    @include flex-between;
+    margin-bottom: 10px;
+    .title {
+      font-size: 1.6rem;
+    }
+    .switch {
+    }
+  }
+  .description {
+    p {
+      font-size: 1.2rem;
+      color: $gray;
+    }
+  }
+}

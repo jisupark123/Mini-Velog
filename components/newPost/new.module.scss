@@ -1,0 +1,164 @@
+.container1 {
+  overflow-y: scroll;
+  height: calc(100% - $modal-header-height);
+  textarea {
+    width: 100%;
+    display: block;
+  }
+}
+.title {
+  padding: $basic-textarea-padding;
+  padding-bottom: 0;
+
+  textarea {
+    display: flex;
+    align-items: center;
+    font-size: 3rem;
+    font-weight: bold;
+    height: 80px;
+    &::placeholder {
+      font-weight: 400;
+    }
+  }
+  .title-length {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 5px;
+    font-size: 1rem;
+  }
+  .line {
+    margin: 1.5rem 0 1rem 0;
+    width: 6rem;
+    height: 5px;
+    background: black;
+    border-radius: 1px;
+  }
+}
+
+.tag {
+  display: flex;
+  align-items: center;
+  padding: $basic-textarea-padding;
+
+  textarea {
+    height: 50px;
+    font-size: 2rem;
+    color: blue;
+  }
+  .tag-btn {
+    @include flex-center;
+    margin-right: 10px;
+    button {
+      color: $blue;
+      font-size: 3rem;
+    }
+  }
+}
+
+.contents {
+  padding: $basic-textarea-padding;
+  height: 60%;
+  border-top: 1px solid $gray;
+  font-size: 2rem;
+
+  textarea {
+    height: 100%;
+    &::placeholder {
+      font-size: 2rem;
+    }
+  }
+  .contents-length {
+    display: flex;
+    justify-content: flex-end;
+    font-size: 1rem;
+  }
+}
+.container2 {
+  display: flex;
+  width: 100%;
+  height: calc(100% - $modal-header-height);
+  .photo {
+    position: relative;
+    width: 90%;
+    border-right: 1px solid gray;
+    .photo-preview {
+      .photo-change {
+        @include flex-center;
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background-color: gray;
+        color: white;
+        cursor: pointer;
+      }
+    }
+
+    .photo-inputs {
+      @include flex-center;
+      flex-direction: column;
+      height: 100%;
+      .photo-ment {
+        margin-top: 10px;
+        h2 {
+          font-size: 2rem;
+        }
+      }
+      .photo-input {
+        @include flex-center;
+        margin-top: 20px;
+      }
+    }
+  }
+  .main {
+    overflow-y: scroll;
+    .sub-title {
+      margin-bottom: 10px;
+      padding-bottom: $basic-textarea-padding;
+      border-bottom: 1px solid $gray;
+      textarea {
+        overflow: auto;
+        padding: $basic-textarea-padding;
+        width: 100%;
+        height: 100%;
+        min-height: 200px;
+        font-size: 1.7rem;
+      }
+      .sub-title-bottom {
+        display: flex;
+        justify-content: flex-end;
+        padding-right: $basic-textarea-padding;
+        .text-length {
+          @include flex-center;
+          margin-top: 5px;
+        }
+      }
+    }
+    .settings {
+      padding: $basic-textarea-padding;
+      .setting {
+        margin-bottom: 20px;
+      }
+    }
+  }
+}
+
+.photo-btn {
+  @include flex-center;
+  padding: 7px;
+  background-color: $blue;
+  color: $white;
+  border-radius: 3px;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.hidden {
+  display: none;
+}
+
+.switch[data-isOn='true'] {
+  justify-content: flex-end;
+}

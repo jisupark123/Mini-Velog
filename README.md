@@ -23,7 +23,8 @@ facebook 같이 다양한 기능과 velog 같이 깔끔한 UI를 가진 미니 S
 ### Post
 
 /posts/[id] -> 게시물 보기 (중요)
-/posts/upload -> 새 글 작성 - 사진 하나에 멘트, 태그달기 (중요)
+
+<!-- /posts/upload -> 새 글 작성 - 사진 하나에 멘트, 태그달기 (중요) -->
 
 ### API
 

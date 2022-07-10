@@ -1,10 +1,10 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useContext, useEffect } from 'react';
+import React, { useState } from 'react';
 import useUser from '../../lib/client/useUser';
-import UserCtx from '../../store/user-context';
+import New from '../newPost/new';
 import styles from './main-nav.module.scss';
-import ModeChangeBtn from './mode-change-btn';
+import ModeChangeBtn from '../btn/mode-change-btn';
 
 interface MainNavProps {
   onlyLogo?: boolean;
@@ -14,13 +14,22 @@ const MainNav: React.FC<MainNavProps> = ({ onlyLogo = false }) => {
   const { user } = useUser();
   const router = useRouter();
 
+  const [showNewPost, setShowNewPost] = useState(true);
+
   function onBtnClick(url: string) {
     router.push(url);
   }
   function logoutHandler() {}
+  function clickNewPostHandler() {
+    setShowNewPost(true);
+  }
+  function closeNewPost() {
+    setShowNewPost(false);
+  }
 
   return (
     <nav className={styles.nav}>
+      {showNewPost && <New closeNewPost={closeNewPost} />}
       <div className={styles.innerNav}>
         <div className={styles.logo}>
           <Link href='/'>
@@ -33,7 +42,7 @@ const MainNav: React.FC<MainNavProps> = ({ onlyLogo = false }) => {
             {user && (
               <button
                 className={styles['post-upload-btn']}
-                onClick={() => onBtnClick('/posts/upload')}
+                onClick={clickNewPostHandler}
               >
                 New
               </button>

@@ -2,11 +2,7 @@ import '../styles/reset.scss';
 import '../styles/globals.scss';
 import type { AppProps } from 'next/app';
 import Script from 'next/script';
-import { mutate, SWRConfig } from 'swr';
-import UserProvider from '../store/user-provider';
-import { useContext, useEffect } from 'react';
-import UserCtx from '../store/user-context';
-import useUser from '../lib/client/useUser';
+import { SWRConfig } from 'swr';
 
 declare global {
   interface Window {
@@ -26,6 +22,7 @@ function App({ Component, pageProps }: AppProps) {
           fetch(url).then((response) => response.json()),
       }}
     >
+      <div id='overlay'></div>
       <Component {...pageProps} />
       <Script
         src='https://developers.kakao.com/sdk/js/kakao.js'

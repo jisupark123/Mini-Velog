@@ -38,16 +38,35 @@ model Session {
 }
 
 model Post {
-  id        Int       @id @default(autoincrement())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    Int
-  comments  Comment[]
-  title     String
-  contents  String    @db.VarChar(2000)
+  id            Int       @id @default(autoincrement())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        Int
+  comments      Comment[]
+  title         String    @db.VarChar(30)
+  subTitle      String    @db.VarChar(100)
+  contents      String    @db.VarChar(2000)
+  tags          Tag[]
+  imageUrl      Image[]
+  showLikes     Boolean
+  allowComments Boolean
 
   @@index([userId])
+}
+
+model Image {
+  id     Int    @id @default(autoincrement())
+  Post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId Int
+  url    String
+}
+
+model Tag {
+  id     Int    @id @default(autoincrement())
+  Post   Post   @relation(fields: [postId], references: [id])
+  postId Int
+  tag    String
 }
 
 model Comment {
