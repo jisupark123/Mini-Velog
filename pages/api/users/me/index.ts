@@ -9,7 +9,7 @@ async function handler(
 ) {
   if (req.method === 'GET') {
     const { id } = req.session.user!;
-    const kakaoId = +getKakaoIdFromSession(id);
+    const kakaoId = getKakaoIdFromSession(id);
     const profile = await client.user.findUnique({
       where: { kakaoId },
     });

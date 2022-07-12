@@ -14,7 +14,7 @@ function Layout({ title, hasNav, seoTitle, children }: LayoutProps) {
   return (
     <React.Fragment>
       <MainNav />
-      <main className={styles.main}>{children}</main>
+      {children}
     </React.Fragment>
   );
 }

@@ -1,6 +1,6 @@
 import React from 'react';
+import Switch from '../btn/switch';
 import styles from './setting-layout.module.scss';
-import Switch from './switch';
 
 interface SettingLayoutProps {
   title: string;

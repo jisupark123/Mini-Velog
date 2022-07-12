@@ -1,0 +1,15 @@
+.container {
+  position: absolute;
+  padding: 12px;
+  width: 270px;
+  background-color: $black;
+  color: $white;
+  font-size: 1.2rem;
+  line-height: 1.5;
+  // transition: all 0.125s ease-in 0s;
+}
+
+.displaying {
+  color: skyblue;
+  font-size: 1.4rem;
+}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion, Transition } from 'framer-motion';
 import styles from './switch.module.scss';
 

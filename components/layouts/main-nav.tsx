@@ -14,7 +14,7 @@ const MainNav: React.FC<MainNavProps> = ({ onlyLogo = false }) => {
   const { user } = useUser();
   const router = useRouter();
 
-  const [showNewPost, setShowNewPost] = useState(true);
+  const [showNewPost, setShowNewPost] = useState(false);
 
   function onBtnClick(url: string) {
     router.push(url);

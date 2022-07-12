@@ -6,6 +6,14 @@
   height: 100vh;
   z-index: $backdrop-z_index;
   background-color: rgba(0, 0, 0, 0.6);
+
+  .closeBtn {
+    position: fixed;
+    top: 12px;
+    right: 20px;
+    font-size: 2rem;
+    color: $white;
+  }
 }
 
 .modal {

@@ -43,28 +43,29 @@ model Post {
   updatedAt     DateTime  @updatedAt
   user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId        Int
-  comments      Comment[]
   title         String    @db.VarChar(30)
   subTitle      String    @db.VarChar(100)
   contents      String    @db.VarChar(2000)
   tags          Tag[]
-  imageUrl      Image[]
-  showLikes     Boolean
-  allowComments Boolean
+  images        Image[]
+  likes         Int       @default(0) // 좋아요
+  comments      Comment[] // 댓글
+  showLikes     Boolean // 좋아요 표시 여부
+  allowComments Boolean // 댓글 허용 여부
 
   @@index([userId])
 }
 
 model Image {
   id     Int    @id @default(autoincrement())
-  Post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId Int
   url    String
 }
 
 model Tag {
   id     Int    @id @default(autoincrement())
-  Post   Post   @relation(fields: [postId], references: [id])
+  post   Post   @relation(fields: [postId], references: [id])
   postId Int
   tag    String
 }

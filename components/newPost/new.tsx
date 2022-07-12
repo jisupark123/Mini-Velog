@@ -1,60 +1,152 @@
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import useMutation from '../../lib/client/useMutation';
+import useUser from '../../lib/client/useUser';
+import { getTags } from '../../lib/client/utils';
 import DisplayLength from '../ui/\bdisplay-length';
+import InputHelper from '../notification/input-helper';
 import Overlay from '../ui/overlay';
 import SettingLayout from '../ui/setting-layout';
 import BasicModal from './basic-modal';
 import styles from './new.module.scss';
+import Notice from '../notification/notice';
 
 interface Props {
   closeNewPost: () => void;
 }
 
-interface IFrom {
+interface IForm {
   title: string;
+  subTitle: string;
   tag: string;
   contents: string;
-  photo: FileList;
+  image: FileList;
+}
+
+export interface INewPost {
+  title: string;
   subTitle: string;
+  tags: string[];
+  contents: string;
+  images: string[];
+  showLikes: boolean;
+  allowComments: boolean;
+}
+
+interface MutationResult {
+  ok: boolean;
 }
 
 const titleLimit = 30;
 const subTitleLimit = 100;
 const contentsLimit = 2000;
+const tagLimit = 10;
 
 const New: React.FC<Props> = ({ closeNewPost }) => {
+  const router = useRouter();
+
   const [page, setPage] = useState(1); // 현재 페이지
+  const [showTagInputHelper, setShowTagInputHelper] = useState(false);
+  const [tagPreview, setTagPreview] = useState(''); // 태그 미리보기
+  const [imagePreview, setImagePreview] = useState('');
   const [showLikes, setShowLikes] = useState(true); // 좋아요, 조회수 숨기기
   const [allowComments, setAllowComments] = useState(true); // 댓글 허용
+  const [notice, setNotice] = useState({
+    show: false,
+    isSuccessed: true,
+    contents: '',
+  });
   // const imgInputRef = useRef<HTMLInputElement>(null);
   const { register, watch, handleSubmit, formState, setFocus, setValue } =
-    useForm<IFrom>();
+    useForm<IForm>();
+
   const { title, subTitle, contents } = watch();
-  function onValid(data: IFrom) {
-    if (data.title.trim().length === 0) {
-      alert('제목이 비어있습니다.');
-      setPage(1);
+  const image = watch('image');
+
+  const [uploadPost, { loading, data: uploadResponse, error }] =
+    useMutation<MutationResult>('api/posts');
+
+  useEffect(() => {
+    console.log('image change');
+    if (image && image.length > 0) {
+      const file = image[0];
+      setImagePreview(URL.createObjectURL(file));
     }
+  }, [image]);
+
+  useEffect(() => {
+    if (uploadResponse?.ok) {
+      // setNotice({
+      //   show: true,
+      //   isSuccessed: true,
+      //   contents: '성공적으로 업로드되었습니다.',
+      // });
+      closeNewPost();
+      router.push('/');
+    }
+  }, [uploadResponse, closeNewPost, router]);
+
+  function validateForm(data: IForm) {
+    function noticeFail(msg: string) {
+      setNotice({
+        show: true,
+        isSuccessed: false,
+        contents: msg,
+      });
+    }
+    if (data.title.trim().length === 0) {
+      noticeFail('제목이 비어있습니다.');
+      return false;
+    }
+    if (data.title.trim().length > titleLimit) {
+      noticeFail(`제목 글자 수 초과 (${titleLimit}자 제한)`);
+      return false;
+    }
+    if (getTags(data.tag).length > tagLimit) {
+      noticeFail('태그는 최대 10개까지 입력할 수 있습니다.');
+      return false;
+    }
+    if (data.contents.trim().length > contentsLimit) {
+      noticeFail(`본문 글자 수 초과 (${contentsLimit}자 제한)`);
+      return false;
+    }
+    if (data.subTitle.trim().length > subTitleLimit) {
+      noticeFail(`부제목 글자 수 초과 (${subTitleLimit}자 제한)`);
+      return false;
+    }
+    return true;
   }
-  function postUploadHandler(data: IFrom) {
-    console.log(data);
+
+  function postUploadHandler(data: IForm) {
+    if (!validateForm(data)) return false;
+    const newPost: INewPost = {
+      title: data.title,
+      subTitle: data.subTitle,
+      tags: getTags(data.tag),
+      contents: data.contents,
+      images: [imagePreview],
+      showLikes,
+      allowComments,
+    };
+    uploadPost(newPost);
   }
-  function onCloseHandler() {
+  function handleOverlayClose() {
     closeNewPost();
   }
-  function finishPage1() {
-    setPage(2);
-  }
+
   function goToPreviousPage() {
     setPage((prev) => prev - 1);
   }
+
   function toggleShowLikes() {
     setShowLikes((prev) => !prev);
   }
   function toggleAllowComments() {
     setAllowComments((prev) => !prev);
   }
+
   function appendTag(event: React.FormEvent<HTMLButtonElement>) {
     event.preventDefault();
     const text = watch().tag.trim();
@@ -64,24 +156,35 @@ const New: React.FC<Props> = ({ closeNewPost }) => {
     setFocus('tag');
   }
 
-  const photo = watch('photo');
-  const [photoPreview, setPhotoPreview] = useState('');
+  function handleDisplayTag(tagInput: string) {
+    const tags = getTags(tagInput);
+    setTagPreview(tags.map((tag) => `#${tag}`).join(' '));
+  }
 
-  useEffect(() => {
-    console.log('image change');
-    if (photo && photo.length > 0) {
-      const file = photo[0];
-      setPhotoPreview(URL.createObjectURL(file));
-    }
-  }, [photo]);
+  function closeNotice() {
+    setNotice({ show: false, isSuccessed: true, contents: '' });
+  }
 
   return (
-    <Overlay onCloseHandler={onCloseHandler}>
-      <form onSubmit={handleSubmit(postUploadHandler)} spellCheck={false}>
+    <Overlay onCloseHandler={handleOverlayClose} hasCloseBtn={true}>
+      <div className={styles.notice}>
+        <Notice
+          show={notice.show}
+          isSuccessed={notice.isSuccessed}
+          contents={notice.contents}
+          closeNotice={closeNotice}
+        />
+      </div>
+
+      <form
+        onSubmit={handleSubmit(postUploadHandler)}
+        spellCheck={false}
+        autoComplete='off'
+      >
         {page === 1 && (
           <BasicModal
             header='새 게시물 만들기'
-            rightBtn={{ title: '다음', onClickHandler: finishPage1 }}
+            rightBtn={{ title: '다음', onClickHandler: () => setPage(2) }}
           >
             <div className={styles.container1}>
               <div className={styles.title}>
@@ -92,19 +195,35 @@ const New: React.FC<Props> = ({ closeNewPost }) => {
                 <div className={styles['title-length']}>
                   <DisplayLength
                     limit={titleLimit}
-                    value={title?.length || 0}
+                    value={title?.trim().length || 0}
                   />
                 </div>
                 <div className={styles.line}></div>
               </div>
               <div className={styles.tag}>
                 <textarea
-                  {...register('tag')}
+                  {...register('tag', {
+                    onBlur: () => setShowTagInputHelper(false),
+                    onChange: () => handleDisplayTag(watch('tag')),
+                  })}
                   placeholder='태그를 달아주세요'
+                  onFocus={() => setShowTagInputHelper(true)}
                 ></textarea>
-                <div className={styles['tag-btn']}>
-                  <button onClick={appendTag}>#</button>
-                </div>
+                {/* <div className={styles['tag-length']}>
+                  <DisplayLength limit={10} value={0} />
+                </div> */}
+                <InputHelper
+                  show={showTagInputHelper}
+                  advice={
+                    '태그와 태그는 쉼표로 구분하며 10개까지 입력하실 수 있습니다.'
+                    // <>
+                    //   <span></span>
+                    //   <br />
+                    //   <span></span>
+                    // </>
+                  }
+                  display={tagPreview}
+                />
               </div>
               <div className={styles.contents}>
                 <textarea
@@ -114,7 +233,7 @@ const New: React.FC<Props> = ({ closeNewPost }) => {
                 <div className={styles['contents-length']}>
                   <DisplayLength
                     limit={contentsLimit}
-                    value={contents?.length || 0}
+                    value={contents?.trim().length || 0}
                   />
                 </div>
               </div>
@@ -132,46 +251,46 @@ const New: React.FC<Props> = ({ closeNewPost }) => {
             }}
           >
             <div className={styles.container2}>
-              <div className={styles.photo}>
-                {photoPreview ? (
-                  <div className={styles['photo-preview']}>
+              <div className={styles.image}>
+                {imagePreview ? (
+                  <div className={styles['image-preview']}>
                     <Image
-                      src={photoPreview}
+                      src={imagePreview}
                       // width={1080}
                       // height={500}
                       layout='fill'
                       alt='이미지 미리보기'
                     />
-                    <label htmlFor='photo' className={styles['photo-change']}>
+                    <label htmlFor='image' className={styles['image-change']}>
                       변경
                     </label>
                     <input
-                      {...register('photo')}
+                      {...register('image')}
                       // ref={imgInputRef}
                       type='file'
                       accept='image/*'
-                      id='photo'
+                      id='image'
                       className={styles.hidden}
                     />
                   </div>
                 ) : (
-                  <div className={styles['photo-inputs']}>
-                    <div className={styles['photo-icon']}></div>
-                    <div className={styles['photo-ment']}>
+                  <div className={styles['image-inputs']}>
+                    <div className={styles['image-icon']}></div>
+                    <div className={styles['image-ment']}>
                       <h2>첨부할 사진을 여기에 끌어다 놓으세요</h2>
                     </div>
-                    <div className={styles['photo-input']}>
-                      <label htmlFor='photo'>
-                        <div className={styles['photo-btn']}>
+                    <div className={styles['image-input']}>
+                      <label htmlFor='image'>
+                        <div className={styles['image-btn']}>
                           컴퓨터에서 선택
                         </div>
                       </label>
                       <input
-                        {...register('photo')}
+                        {...register('image')}
                         // ref={imgInputRef}
                         type='file'
                         accept='image/*'
-                        id='photo'
+                        id='image'
                         className={styles.hidden}
                       />
                     </div>
@@ -188,7 +307,7 @@ const New: React.FC<Props> = ({ closeNewPost }) => {
                     <div className={styles['text-length']}>
                       <DisplayLength
                         limit={subTitleLimit}
-                        value={subTitle?.length || 0}
+                        value={subTitle?.trim().length || 0}
                       />
                     </div>
                   </div>

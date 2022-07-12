@@ -1,3 +1,9 @@
+.notice {
+  position: fixed;
+  z-index: 1000;
+  top: 50px;
+  right: 50px;
+}
 .container1 {
   overflow-y: scroll;
   height: calc(100% - $modal-header-height);
@@ -36,8 +42,6 @@
 }
 
 .tag {
-  display: flex;
-  align-items: center;
   padding: $basic-textarea-padding;
 
   textarea {
@@ -45,13 +49,9 @@
     font-size: 2rem;
     color: blue;
   }
-  .tag-btn {
-    @include flex-center;
-    margin-right: 10px;
-    button {
-      color: $blue;
-      font-size: 3rem;
-    }
+  .tag-length {
+    display: flex;
+    justify-content: flex-end;
   }
 }
 
@@ -77,12 +77,12 @@
   display: flex;
   width: 100%;
   height: calc(100% - $modal-header-height);
-  .photo {
+  .image {
     position: relative;
     width: 90%;
     border-right: 1px solid gray;
-    .photo-preview {
-      .photo-change {
+    .image-preview {
+      .image-change {
         @include flex-center;
         position: absolute;
         bottom: 5px;
@@ -96,17 +96,17 @@
       }
     }
 
-    .photo-inputs {
+    .image-inputs {
       @include flex-center;
       flex-direction: column;
       height: 100%;
-      .photo-ment {
+      .image-ment {
         margin-top: 10px;
         h2 {
           font-size: 2rem;
         }
       }
-      .photo-input {
+      .image-input {
         @include flex-center;
         margin-top: 20px;
       }
@@ -145,7 +145,7 @@
   }
 }
 
-.photo-btn {
+.image-btn {
   @include flex-center;
   padding: 7px;
   background-color: $blue;
