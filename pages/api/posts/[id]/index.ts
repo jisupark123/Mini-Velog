@@ -10,18 +10,26 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const {
     query: { id: postId },
   } = req;
-  const post = await client.post.findUnique({
-    where: { id: +postId },
-    include: {
-      user: {
-        select: { id: true, name: true, profileImage: true, posts: true },
+  if (req.method === 'GET') {
+    const post = await client.post.findUnique({
+      where: { id: +postId },
+      include: {
+        user: {
+          select: { id: true, name: true, profileImage: true, posts: true },
+        },
+        tags: true,
+        images: true,
+        comments: true,
       },
-      tags: true,
-      images: true,
-      comments: true,
-    },
-  });
-  return res.json({ ok: true, post });
+    });
+    return res.json({ ok: true, post });
+  }
+  if (req.method === 'DELETE') {
+    await client.post.delete({
+      where: { id: +postId },
+    });
+    return res.json({ ok: true });
+  }
 };
 
-export default withHandler({ methods: ['GET'], handler });
+export default withHandler({ methods: ['GET', 'DELETE'], handler });

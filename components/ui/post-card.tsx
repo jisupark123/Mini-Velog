@@ -34,7 +34,7 @@ const PostCard: React.FC<PostCardProps> = (props) => {
         <div className={styles['sub-info']}>
           <span>{`${timeDiff} 전`}</span>
           <span>&#183;</span>
-          <span>댓글</span>
+          <span>{`댓글 ${props.commentCount}개`}</span>
         </div>
       </div>
       <div className={styles.footer}>

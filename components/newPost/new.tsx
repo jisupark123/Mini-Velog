@@ -8,10 +8,10 @@ import { getTags } from '../../lib/client/utils';
 import DisplayLength from '../ui/\bdisplay-length';
 import InputHelper from '../notification/input-helper';
 import Overlay from '../ui/overlay';
-import SettingLayout from '../ui/setting-layout';
+import SettingLayout from '../layouts/setting-layout';
 import BasicModal from './basic-modal';
 import styles from './new.module.scss';
-import Notice from '../notification/notice';
+import Notice, { initialNotice } from '../notification/notice';
 
 interface Props {
   closeNewPost: () => void;
@@ -53,11 +53,7 @@ const New: React.FC<Props> = ({ closeNewPost }) => {
   const [imagePreview, setImagePreview] = useState('');
   const [showLikes, setShowLikes] = useState(true); // 좋아요, 조회수 숨기기
   const [allowComments, setAllowComments] = useState(true); // 댓글 허용
-  const [notice, setNotice] = useState({
-    show: false,
-    isSuccessed: true,
-    contents: '',
-  });
+  const [notice, setNotice] = useState(initialNotice);
   // const imgInputRef = useRef<HTMLInputElement>(null);
   const { register, watch, handleSubmit, formState, setFocus, setValue } =
     useForm<IForm>();
@@ -93,7 +89,8 @@ const New: React.FC<Props> = ({ closeNewPost }) => {
       setNotice({
         show: true,
         isSuccessed: false,
-        contents: msg,
+        header: 'Error',
+        message: msg,
       });
     }
     if (data.title.trim().length === 0) {
@@ -162,7 +159,7 @@ const New: React.FC<Props> = ({ closeNewPost }) => {
   }
 
   function closeNotice() {
-    setNotice({ show: false, isSuccessed: true, contents: '' });
+    setNotice(initialNotice);
   }
 
   function handleSetPage2() {
@@ -174,14 +171,13 @@ const New: React.FC<Props> = ({ closeNewPost }) => {
 
   return (
     <Overlay onCloseHandler={handleOverlayClose} hasCloseBtn={true}>
-      <div className={styles.notice}>
-        <Notice
-          show={notice.show}
-          isSuccessed={notice.isSuccessed}
-          contents={notice.contents}
-          closeNotice={closeNotice}
-        />
-      </div>
+      <Notice
+        show={notice.show}
+        isSuccessed={notice.isSuccessed}
+        header={notice.header}
+        message={notice.message}
+        closeNotice={closeNotice}
+      />
 
       <form
         onSubmit={handleSubmit(postUploadHandler)}

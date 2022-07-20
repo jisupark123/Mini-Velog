@@ -10,6 +10,7 @@ $card-padding: 1.5rem;
 $backdrop-z_index: 100;
 $modal-z_index: calc($backdrop-z_index + 1);
 $main-nav-z_index: 90;
+$notice-z_index: 110;
 
 // colors
 
@@ -21,6 +22,8 @@ $blue: #6b7af7;
 $indigo: #6610f2;
 $purple: #9a77dc;
 $pink: #f4d3e7;
+// $error: #f8d7dad9;
+$error: #f8d7da;
 $red: #e60f6c;
 $orange: #fd7e14;
 $yellow: #ffd89d;
@@ -30,8 +33,6 @@ $cyan: #c7cdff;
 $white: #fff;
 $gray: #828086;
 $grayDark: #3f3f3f;
-$primary: #6b7af7;
-$secondary: #828086;
 $success: #82d268;
 $info: #c7cdff;
 $warning: #ffd89d;

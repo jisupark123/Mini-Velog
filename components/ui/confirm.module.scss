@@ -1,0 +1,40 @@
+.container {
+  @include center-fixed;
+  display: flex;
+  flex-direction: column;
+  width: 500px;
+  background-color: $white;
+  border-radius: 0.3rem;
+}
+
+.question {
+  padding: 1.7rem;
+  font-size: 1.5rem;
+}
+
+.btns {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 1.7rem;
+  border-top: 1px solid rgba($color: #000000, $alpha: 0.15);
+  button {
+    @include btn;
+    color: $white;
+    border-radius: 0.4rem;
+
+    &:first-child {
+      margin-right: 10px;
+      background-color: $gray;
+      &:hover {
+        background-color: #68666b;
+      }
+    }
+    &:last-child {
+      background-color: $blue;
+      &:hover {
+        background-color: #4151e2;
+      }
+    }
+  }
+}

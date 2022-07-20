@@ -31,7 +31,11 @@ facebook 같이 다양한 기능과 velog 같이 깔끔한 UI를 가진 미니 S
 
 ### API
 
-POST /api/posts -> 새 게시글 생성
-POST /api/posts/[id]/comments -> 게시글에 댓글 작성
 POST /api/users/kakao-login -> 카카오 로그인 요청 처리
 GET /api/users/me -> 세션의 아이디와 일치하는 유저의 정보 반환 / 해당하는 유저가 없다면 에러 반환
+POST /api/posts -> 새 게시글 생성
+GET /api/posts -> 전체 게시물 정보 받아오기
+GET /api/posts/[id] -> 특정 게시물 정보 받아오기
+POST /api/comments-> 게시글에 새 댓글 작성
+POST /api/comments/[id]-> 댓글 수정
+DELETE /api/comments/[id]-> 댓글 삭제

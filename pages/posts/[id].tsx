@@ -7,10 +7,14 @@ import Layout from '../../components/layouts/layout';
 import client from '../../lib/server/client';
 import styles from './[id].module.scss';
 import CommentBox from '../../components/ui/comment-box';
+import Confirm, { initialConfirm } from '../../components/ui/confirm';
 import useMutation from '../../lib/client/useMutation';
 import useUser from '../../lib/client/useUser';
 import LoadingSvg from '../../components/svg/loading-svg';
 import { PostCommentResponse } from '../api/comments';
+import { ResponseType } from '../../lib/server/withHandler';
+import { useRouter } from 'next/router';
+import Notice, { initialNotice } from '../../components/notification/notice';
 
 interface CommentWithUser extends Comment {
   user: User;
@@ -30,8 +34,12 @@ interface PostDetailProps {
 const textareaFontSize = 17; //px
 
 const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
+  const router = useRouter();
   const { user } = useUser();
+  const [notice, setNotice] = useState(initialNotice);
+  const [confirm, setConfirm] = useState(initialConfirm);
   const [comments, setComments] = useState(post.comments);
+  const [textareaHeight, setTextareaHeight] = useState(70);
   const [
     addComment,
     {
@@ -43,16 +51,39 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
     method: 'POST',
     url: `/api/comments`,
   });
-  const [textareaHeight, setTextareaHeight] = useState(70);
 
   const date = new Date(post.createdAt);
   const newCommentRef = useRef<HTMLTextAreaElement>(null);
+
+  function showDeleteConfirm() {
+    setConfirm({
+      show: true,
+      message: '정말로 삭제하시겠습니까?',
+      handleOk: handleDeletePost,
+    });
+  }
+
+  async function handleDeletePost() {
+    setConfirm(initialConfirm);
+    const response: ResponseType = await fetch(`/api/posts/${post.id}`, {
+      method: 'DELETE',
+    });
+    if (response.ok) {
+      router.push('/');
+    }
+  }
 
   function handleAddNewComment() {
     console.log('click');
     const comment = newCommentRef.current?.value.trim();
     if (!comment?.length) {
-      alert('댓글을 작성하는데 실패했습니다.');
+      setNotice((prev) => ({
+        ...prev,
+        show: true,
+        isSuccessed: false,
+        header: 'Error',
+        message: '댓글을 작성하는데 실패했습니다.',
+      }));
       return;
     }
     addComment({ postId: post.id, comment });
@@ -63,10 +94,29 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
   ) {
     if (user?.id !== commentOwnerId) return;
     setComments(comments.filter((comment) => comment.id !== commentId));
-    const response = await fetch(`/api/comments/${commentId}`, {
+    const response: ResponseType = await fetch(`/api/comments/${commentId}`, {
       method: 'DELETE',
     });
-    console.log(response);
+    if (response.ok) {
+      setNotice((prev) => ({
+        ...prev,
+        show: true,
+        isSuccessed: true,
+        header: 'Success',
+        message: '댓글을 삭제했습니다.',
+      }));
+      return;
+    }
+    if (!response.ok) {
+      setNotice((prev) => ({
+        ...prev,
+        show: true,
+        isSuccessed: false,
+        header: 'Error',
+        message: 'error code:500',
+      }));
+      return;
+    }
   }
   // function add
   useEffect(() => {
@@ -80,16 +130,41 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
   }, [addCommentData, addCommentError]);
   return (
     <div className={styles.wrapper}>
+      <Notice
+        show={notice.show}
+        isSuccessed={notice.isSuccessed}
+        header={notice.header}
+        message={notice.message}
+        closeNotice={() => setNotice(initialNotice)}
+      />
       <Layout>
+        {confirm.show && (
+          <Confirm
+            message={confirm.message}
+            handleCancel={() =>
+              setConfirm((prev) => ({ ...prev, show: false }))
+            }
+            handleOk={confirm.handleOk}
+          />
+        )}
+
         <div className={styles.container}>
           <div className={styles.header}>
             <h1>{post.title}</h1>
-            <div className={styles.info}>
-              <span className={styles.username}>{post.user.name}</span>
-              <span className={styles.separator}>&#183;</span>
-              <span className={styles.date}>{`${date.getFullYear()}년 ${
-                date.getMonth() + 1
-              }월 ${date.getDate()}일`}</span>
+            <div className={styles.metadata}>
+              <div className={styles.info}>
+                <span className={styles.username}>{post.user.name}</span>
+                <span className={styles.separator}>&#183;</span>
+                <span className={styles.date}>{`${date.getFullYear()}년 ${
+                  date.getMonth() + 1
+                }월 ${date.getDate()}일`}</span>
+              </div>
+              {post.userId === user?.id && (
+                <div className={styles.manage}>
+                  <button>수정</button>
+                  <button onClick={showDeleteConfirm}>삭제</button>
+                </div>
+              )}
             </div>
             <div className={styles.tags}>
               {post.tags.map((tag, idx) => (

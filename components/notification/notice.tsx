@@ -5,31 +5,40 @@ import styles from './notice.module.scss';
 interface NoticeProps {
   show: boolean;
   isSuccessed: boolean;
-  contents: string;
+  header: string;
+  message: string;
   closeNotice: () => void;
 }
 
+export const initialNotice = {
+  show: false,
+  isSuccessed: true,
+  header: '',
+  message: '',
+};
+
 const variants: Variants = {
   initial: {
-    opacity: 1,
+    opacity: 0,
     // y: -30,
   },
   animate: {
     opacity: 1,
     y: 0,
-    transition: { ease: 'easeInOut' },
+    transition: { ease: 'easeInOut', duration: 0.3 },
   },
   exit: {
     opacity: 0,
     // y: -30,
-    transition: { ease: 'easeInOut', duration: 0.5, delay: 1 },
+    transition: { ease: 'easeInOut', duration: 0.5 },
   },
 };
 
 const Notice: React.FC<NoticeProps> = ({
   show,
   isSuccessed,
-  contents,
+  header,
+  message,
   closeNotice,
 }) => {
   useEffect(() => {
@@ -37,7 +46,7 @@ const Notice: React.FC<NoticeProps> = ({
       setTimeout(() => {
         console.log('aa');
         closeNotice();
-      }, 1000);
+      }, 3000);
     }
   }, [closeNotice, show]);
   return (
@@ -52,7 +61,11 @@ const Notice: React.FC<NoticeProps> = ({
           animate='animate'
           exit='exit'
         >
-          <div className={styles.contents}>{contents}</div>
+          <div className={styles.header}>
+            <div className={styles.result}>{header}</div>
+            <button onClick={closeNotice}>✕</button>
+          </div>
+          <div className={styles.message}>{message}</div>
         </motion.div>
       )}
     </AnimatePresence>

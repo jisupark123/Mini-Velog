@@ -7,6 +7,7 @@ async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseType>
 ) {
+  // 댓글 수정
   if (req.method === 'POST') {
     const {
       query: { id },
@@ -18,6 +19,8 @@ async function handler(
     });
     return res.json({ ok: true });
   }
+
+  // 댓글 삭제
   if (req.method === 'DELETE') {
     const {
       query: { id },
