@@ -15,6 +15,7 @@
 
 .wrapper {
   @include card-setting;
+  padding: $card-padding;
   width: 100%;
 }
 

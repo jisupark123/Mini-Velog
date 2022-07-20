@@ -1,11 +1,11 @@
 .container {
+  @include card-setting;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   margin: 1.5rem;
   width: 30rem;
-  height: 35rem;
-  box-shadow: rgb(0 0 0 / 4%) 0px 4px 16px 0px;
+  height: 30rem;
   overflow: hidden;
   border-radius: 4px;
   background-color: $bg--element1;
@@ -14,7 +14,7 @@
 .main {
   display: flex;
   flex-direction: column;
-  padding: 1.3rem;
+  padding: $card-padding;
 }
 
 .contents {
@@ -52,7 +52,7 @@
 
 .footer {
   @include flex-between;
-  padding: 1rem 1.3rem;
+  padding: 1rem $card-padding;
   border-top: 1px solid rgba($color: #000000, $alpha: 0.1);
   .user-info {
     font-size: 1.2rem;

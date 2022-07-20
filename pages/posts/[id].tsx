@@ -142,48 +142,60 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
             {/* <img/> */}
             <div className={styles.contents}>{post.contents}</div>
           </div>
-          <div className={styles.comments}>
-            {/* <div className={styles['division-line']}></div> */}
-            <div className={styles['new-comment']}>
-              {user ? (
-                <>
-                  <textarea
-                    ref={newCommentRef}
-                    placeholder='댓글을 작성하세요'
-                    style={{
-                      height: `${textareaHeight}px`,
-                      fontSize: `${textareaFontSize}px`,
-                    }}
-                    spellCheck='false'
-                  ></textarea>
-                  {/* <TextareaAutosize placeholder='댓글을 작성하세요' minRows={10} /> */}
-                  <div className={styles['post-btn']}>
-                    <button onClick={handleAddNewComment}>댓글 작성</button>
+          {post.allowComments ? (
+            <div className={styles.comments}>
+              {/* <div className={styles['division-line']}></div> */}
+              <div className={styles['new-comment']}>
+                {user ? (
+                  <>
+                    <textarea
+                      ref={newCommentRef}
+                      placeholder='댓글을 작성하세요'
+                      style={{
+                        height: `${textareaHeight}px`,
+                        fontSize: `${textareaFontSize}px`,
+                      }}
+                      spellCheck='false'
+                    ></textarea>
+                    {/* <TextareaAutosize placeholder='댓글을 작성하세요' minRows={10} /> */}
+                    <div className={styles['post-btn']}>
+                      <button onClick={handleAddNewComment}>댓글 작성</button>
+                    </div>
+                  </>
+                ) : (
+                  <div className={styles.deactivated}>
+                    로그인 후 댓글을 작성하실 수 있습니다.
                   </div>
-                </>
+                )}
+                {addCommentIsLodding && (
+                  <div className={styles.loading}>
+                    <LoadingSvg width={100} />
+                  </div>
+                )}
+              </div>
+              {comments.length > 0 ? (
+                <div className={styles['other-comments']}>
+                  {comments &&
+                    comments.map((comment, i) => (
+                      <CommentBox
+                        key={i}
+                        comment={comment}
+                        userId={user?.id}
+                        onDelete={handleDeleteComment}
+                      />
+                    ))}
+                </div>
               ) : (
-                <div className={styles.deactivated}>
-                  로그인 후 댓글을 작성하실 수 있습니다.
-                </div>
-              )}
-              {addCommentIsLodding && (
-                <div className={styles.loading}>
-                  <LoadingSvg width={100} />
+                <div className={styles['no-comments']}>
+                  아직 댓글이 없습니다. 먼저 대화를 시도해보세요!
                 </div>
               )}
             </div>
-            <div className={styles['other-comments']}>
-              {comments &&
-                comments.map((comment, i) => (
-                  <CommentBox
-                    key={i}
-                    comment={comment}
-                    userId={user?.id}
-                    onDelete={handleDeleteComment}
-                  />
-                ))}
+          ) : (
+            <div className={styles['not-allow-comment']}>
+              댓글을 지원하지 않는 게시물입니다.
             </div>
-          </div>
+          )}
         </div>
       </Layout>
     </div>
