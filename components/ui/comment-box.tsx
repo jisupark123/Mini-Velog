@@ -11,10 +11,25 @@ interface CommentWithUser extends Comment {
 interface CommentBoxProps {
   comment: CommentWithUser;
   userId: number | undefined;
+  onDelete: (commentId: number, commentOwnerId: number) => void;
 }
 
-const CommentBox: React.FC<CommentBoxProps> = ({ comment, userId }) => {
-  const [showOptions, setShowOptions] = useState(true);
+const CommentBox: React.FC<CommentBoxProps> = ({
+  comment,
+  userId,
+  onDelete,
+}) => {
+  const [showOptions, setShowOptions] = useState(false);
+
+  function toggleShowOptions() {
+    setShowOptions((prev) => !prev);
+  }
+  function handleUpdateComment() {}
+  function handleDeleteComment() {
+    setShowOptions(false);
+    onDelete(comment.id, comment.userId);
+  }
+
   return (
     <div className={styles.container}>
       <nav></nav>
@@ -33,7 +48,10 @@ const CommentBox: React.FC<CommentBoxProps> = ({ comment, userId }) => {
                 </span>
               </div>
               <div className={styles['option-container']}>
-                <button className={styles['option-btn']}>
+                <button
+                  className={styles['option-btn']}
+                  onClick={toggleShowOptions}
+                >
                   <svg
                     aria-hidden='true'
                     focusable='false'
@@ -53,10 +71,20 @@ const CommentBox: React.FC<CommentBoxProps> = ({ comment, userId }) => {
                 {showOptions && (
                   <ul className={styles.options}>
                     <li>
-                      <button disabled={comment.userId !== userId}>수정</button>
+                      <button
+                        disabled={comment.userId !== userId}
+                        onClick={handleUpdateComment}
+                      >
+                        수정
+                      </button>
                     </li>
                     <li>
-                      <button disabled={comment.userId !== userId}>삭제</button>
+                      <button
+                        disabled={comment.userId !== userId}
+                        onClick={handleDeleteComment}
+                      >
+                        삭제
+                      </button>
                     </li>
                   </ul>
                 )}

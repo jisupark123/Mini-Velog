@@ -21,6 +21,7 @@
 .metadata {
   display: flex;
   justify-content: space-between;
+  margin-bottom: 10px;
 }
 
 .userinfo {
@@ -55,22 +56,34 @@
   }
   .options {
     position: absolute;
-    transform: translate3d(-120px, -107px, 0px);
+    // transform: translate3d(-120px, -107px, 0px);
+    transform: translate3d(-120px, -13px, 0px);
     top: 0px;
     left: 0px;
-    right: auto;
-    bottom: auto;
-    min-width: 13rem;
+    // right: auto;
+    // bottom: auto;
+    width: 13rem;
     padding: 1rem 0;
     font-size: 1.3rem;
     background-color: $white;
     text-align: left;
     border: 1px solid rgba(0, 0, 0, 0.15);
     border-radius: 0.25rem;
+    overflow: auto;
     li {
       button {
         width: 100%;
         padding: 0.5rem 1.5rem;
+        &:hover {
+          background-color: $bg--gray;
+        }
+        &:disabled {
+          &:hover {
+            background-color: inherit;
+          }
+          cursor: default;
+          color: $gray;
+        }
       }
     }
   }

@@ -6,15 +6,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import Layout from '../../components/layouts/layout';
 import client from '../../lib/server/client';
 import styles from './[id].module.scss';
-import { getDateDiff } from '../../lib/client/utils';
 import CommentBox from '../../components/ui/comment-box';
 import useMutation from '../../lib/client/useMutation';
 import useUser from '../../lib/client/useUser';
-import Loading from '../../public/loading.svg';
 import LoadingSvg from '../../components/svg/loading-svg';
-import { useRouter } from 'next/router';
-import useSWR from 'swr';
-import { PostCommentResponse } from '../api/posts/[id]/comment';
+import { PostCommentResponse } from '../api/comments';
 
 interface CommentWithUser extends Comment {
   user: User;
@@ -34,7 +30,6 @@ interface PostDetailProps {
 const textareaFontSize = 17; //px
 
 const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
-  const router = useRouter();
   const { user } = useUser();
   const [comments, setComments] = useState(post.comments);
   const [
@@ -46,7 +41,7 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
     },
   ] = useMutation<PostCommentResponse>({
     method: 'POST',
-    url: `/api/posts/${router.query.id}/comment`,
+    url: `/api/comments`,
   });
   const [textareaHeight, setTextareaHeight] = useState(70);
 
@@ -60,7 +55,18 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
       alert('댓글을 작성하는데 실패했습니다.');
       return;
     }
-    addComment({ comment });
+    addComment({ postId: post.id, comment });
+  }
+  async function handleDeleteComment(
+    commentId: number,
+    commentOwnerId: number
+  ) {
+    if (user?.id !== commentOwnerId) return;
+    setComments(comments.filter((comment) => comment.id !== commentId));
+    const response = await fetch(`/api/comments/${commentId}`, {
+      method: 'DELETE',
+    });
+    console.log(response);
   }
   // function add
   useEffect(() => {
@@ -169,7 +175,12 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
             <div className={styles['other-comments']}>
               {comments &&
                 comments.map((comment, i) => (
-                  <CommentBox key={i} comment={comment} userId={user?.id} />
+                  <CommentBox
+                    key={i}
+                    comment={comment}
+                    userId={user?.id}
+                    onDelete={handleDeleteComment}
+                  />
                 ))}
             </div>
           </div>
