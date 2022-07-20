@@ -1,17 +1,21 @@
 $basic-font-size: 1.6rem;
 $basic-textarea-padding: 15px;
-$desktop-nav-width: 800px;
+$desktop-nav-width: 1024px;
 $nav-height: 6.5rem;
 $main-height: calc(100vh - $nav-height);
 $modal-header-height: 50px;
 
-// overlay
-$backdrop-z_index: 30;
+// z_index
+$backdrop-z_index: 100;
 $modal-z_index: calc($backdrop-z_index + 1);
+$main-nav-z_index: 90;
 
 // colors
 
 $bg--main-page: #f8f9fa;
+$bg--element1: #ffffff;
+$bg--element2: #f8f9fa;
+$bg--gray: #f0f0f5;
 $blue: #6b7af7;
 $indigo: #6610f2;
 $purple: #9a77dc;

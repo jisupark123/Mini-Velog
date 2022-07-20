@@ -1,11 +1,13 @@
-.nav {
+.container {
   position: fixed;
   top: 0;
   left: 0;
+  z-index: $main-nav-z_index;
   width: 100%;
   height: $nav-height;
+  background-color: $bg--element1;
 }
-.innerNav {
+.nav {
   width: $desktop-nav-width;
   height: 100%;
   @include flex-between;

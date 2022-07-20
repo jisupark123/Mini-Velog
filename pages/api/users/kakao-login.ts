@@ -42,55 +42,60 @@ async function getUserFromKakao({ access_token }: TokenResponse) {
   }).then((res) => res.json());
   return response;
 }
-async function updateSession(kakaoId: number, newSessionId: string) {
-  const session = await client.session.update({
-    where: {
-      kakaoId,
-    },
-    data: {
-      sessionId: newSessionId,
-    },
+async function getUser(kakaoId: number) {
+  const user = await client.user.findUnique({
+    where: { kakaoId },
   });
-  console.log(`try1: ${session}`);
-  return session;
+  console.log('getUser');
+  return user;
 }
-async function createSessionAndConnectToUser(
-  kakaoId: number,
-  newSessionId: string
-) {
+async function createOrUpdateSession(userId: number, newSessionId: string) {
   const user = await client.user.update({
-    where: {
-      kakaoId,
-    },
+    where: { id: userId },
     data: {
       session: {
-        create: { kakaoId, sessionId: newSessionId },
+        upsert: {
+          update: { sessionId: newSessionId },
+          create: { sessionId: newSessionId },
+        },
       },
     },
   });
-  console.log(`try2: ${user}`);
+  console.log('createOrUpdateSession');
   return user;
 }
-async function createUser(
-  {
-    id: kakaoId,
-    properties: { nickname, profile_image, thumbnail_image },
-  }: UserInfo,
-  newSessionId: string
-) {
+// async function createSessionAndConnectToUser(
+//   kakaoId: number,
+//   newSessionId: string
+// ) {
+//   const user = await client.user.update({
+//     where: {
+//       kakaoId: kakaoId,
+//     },
+//     data: { session: { update: { sessionId: newSessionId } } },
+//   });
+//   console.log(`try2: ${user}`);
+//   return user;
+// }
+async function createUser({
+  id: kakaoId,
+  properties: { nickname, profile_image, thumbnail_image },
+}: UserInfo) {
   const user = await client.user.create({
     data: {
       name: nickname,
       kakaoId,
       loggedFrom: 'Kakao',
       profileImage: profile_image || null,
-      session: {
-        create: { kakaoId, sessionId: newSessionId },
-      },
     },
   });
-  console.log(`catch: ${user}`);
-  return user;
+  const newSessionId = createSession(user.id);
+  await client.user.update({
+    where: { id: user.id },
+    data: { session: { create: { sessionId: newSessionId } } },
+  });
+  console.log(`아이디 생성 끝: ${user}`);
+  return newSessionId;
 }
 
 const handler = async (
@@ -105,24 +110,17 @@ const handler = async (
     id: kakaoId,
     properties: { nickname, profile_image, thumbnail_image },
   } = userInfo;
+  const user = await getUser(kakaoId);
+  let newSessionId;
 
-  let user;
-  const newSessionId = createSession(kakaoId);
-
-  try {
-    // 세션이 존재하면 업데이트만 해주면 됨
-    await updateSession(kakaoId, newSessionId);
-  } catch {
-    try {
-      // 유저는 존재하는데 세션이 없는 경우 (세션이 해킹당했다고 의심되면 세션 저장소를 없애야 한다)
-      // 유저의 세션 값만 업데이트 해준다.
-      user = await createSessionAndConnectToUser(kakaoId, newSessionId);
-    } catch {
-      // 유저가 존재하지 않으면 새로운 계정을 생성한다.
-      user = await createUser(userInfo, newSessionId);
-    }
+  if (user) {
+    newSessionId = createSession(user.id);
+    await createOrUpdateSession(user.id, newSessionId);
+  } else {
+    newSessionId = await createUser(userInfo);
   }
 
+  console.log('success!');
   req.session.user = { id: newSessionId };
   await req.session.save();
   return res.json({ ok: true });

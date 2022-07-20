@@ -40,7 +40,7 @@ interface MutationResult {
 }
 
 const titleLimit = 30;
-const subTitleLimit = 100;
+const subTitleLimit = 150;
 const contentsLimit = 2000;
 const tagLimit = 10;
 
@@ -66,7 +66,7 @@ const New: React.FC<Props> = ({ closeNewPost }) => {
   const image = watch('image');
 
   const [uploadPost, { loading, data: uploadResponse, error }] =
-    useMutation<MutationResult>('api/posts');
+    useMutation<MutationResult>({ method: 'POST', url: 'api/posts' });
 
   useEffect(() => {
     console.log('image change');
@@ -165,6 +165,13 @@ const New: React.FC<Props> = ({ closeNewPost }) => {
     setNotice({ show: false, isSuccessed: true, contents: '' });
   }
 
+  function handleSetPage2() {
+    if (!subTitle?.length) {
+      setValue('subTitle', contents?.slice(0, subTitleLimit));
+    }
+    setPage(2);
+  }
+
   return (
     <Overlay onCloseHandler={handleOverlayClose} hasCloseBtn={true}>
       <div className={styles.notice}>
@@ -184,7 +191,7 @@ const New: React.FC<Props> = ({ closeNewPost }) => {
         {page === 1 && (
           <BasicModal
             header='새 게시물 만들기'
-            rightBtn={{ title: '다음', onClickHandler: () => setPage(2) }}
+            rightBtn={{ title: '다음', onClickHandler: handleSetPage2 }}
           >
             <div className={styles.container1}>
               <div className={styles.title}>

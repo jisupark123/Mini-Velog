@@ -33,11 +33,13 @@ const Notice: React.FC<NoticeProps> = ({
   closeNotice,
 }) => {
   useEffect(() => {
-    setTimeout(() => {
-      console.log('aa');
-      closeNotice();
-    }, 1000);
-  }, [closeNotice]);
+    if (show) {
+      setTimeout(() => {
+        console.log('aa');
+        closeNotice();
+      }, 1000);
+    }
+  }, [closeNotice, show]);
   return (
     <AnimatePresence>
       {show && (

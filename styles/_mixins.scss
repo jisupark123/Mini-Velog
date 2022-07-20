@@ -1,6 +1,18 @@
 @mixin page-config {
-  height: $main-height;
+  min-height: $main-height;
   margin-top: $nav-height;
+}
+
+@mixin desktop--main-page {
+  width: $desktop-nav-width;
+  margin: 0 auto;
+  @include page-config;
+}
+
+@mixin desktop--post-page {
+  width: 768px;
+  margin: 0 auto;
+  @include page-config;
 }
 
 @mixin flex-center {
@@ -42,4 +54,11 @@
   @media (max-width: $single-post-max) {
     @content;
   }
+}
+
+@mixin card-setting {
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  background-color: #fff;
+  box-shadow: 10px 10px 20px 1px rgb(0 0 0 / 5%);
 }

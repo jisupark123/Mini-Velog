@@ -8,9 +8,13 @@ import ModeChangeBtn from '../btn/mode-change-btn';
 
 interface MainNavProps {
   onlyLogo?: boolean;
+  hasTapBar?: boolean;
 }
 
-const MainNav: React.FC<MainNavProps> = ({ onlyLogo = false }) => {
+const MainNav: React.FC<MainNavProps> = ({
+  onlyLogo = false,
+  hasTapBar = true,
+}) => {
   const { user } = useUser();
   const router = useRouter();
 
@@ -28,9 +32,9 @@ const MainNav: React.FC<MainNavProps> = ({ onlyLogo = false }) => {
   }
 
   return (
-    <nav className={styles.nav}>
+    <div className={styles.container}>
       {showNewPost && <New closeNewPost={closeNewPost} />}
-      <div className={styles.innerNav}>
+      <div className={styles.nav}>
         <div className={styles.logo}>
           <Link href='/'>
             <a>큰거온다</a>
@@ -58,7 +62,8 @@ const MainNav: React.FC<MainNavProps> = ({ onlyLogo = false }) => {
           </div>
         )}
       </div>
-    </nav>
+      {hasTapBar && <div className={styles['tab-bar']}></div>}
+    </div>
   );
 };
 

@@ -2,10 +2,11 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 export interface ResponseType {
   ok: boolean;
+  error?: string;
   [key: string]: any;
 }
 
-type method = 'GET' | 'POST' | 'DELETE';
+type method = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
 interface ConfigType {
   methods: method[];

@@ -1,0 +1,16 @@
+.wrapper {
+  background-color: $bg--gray;
+}
+
+.container {
+  @include desktop--main-page;
+}
+
+.main {
+}
+
+.posts {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}

@@ -1,11 +1,11 @@
 import React from 'react';
 import MainNav from './main-nav';
 import styles from './layout.module.scss';
-import Script from 'next/script';
 
 interface LayoutProps {
   title?: string;
   hasNav?: boolean;
+  hasTapBar?: boolean;
   seoTitle?: string;
   children: React.ReactNode;
 }

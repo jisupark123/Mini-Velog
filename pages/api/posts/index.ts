@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getKakaoIdFromSession } from '../../../lib/secret/createSession';
+import { getUserIdFromSession } from '../../../lib/secret/createSession';
 import client from '../../../lib/server/client';
 import withHandler from '../../../lib/server/withHandler';
 import { withApiSession } from '../../../lib/server/withSession';
@@ -40,7 +40,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       data: {
         user: {
           connect: {
-            kakaoId: getKakaoIdFromSession(user!.id),
+            id: getUserIdFromSession(user!.id),
           },
         },
         title,
@@ -48,7 +48,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         contents,
         tags: {
           create: tags.map((tag) => ({
-            tag,
+            name: tag,
           })),
         },
         images: {
@@ -62,8 +62,24 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
     return res.json({ ok: true });
   }
+  if (req.method === 'GET') {
+    const posts = await client.post.findMany({
+      select: {
+        user: { select: { name: true, profileImage: true } },
+        id: true,
+        createdAt: true,
+        title: true,
+        subTitle: true,
+        comments: true,
+        likes: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
 };
 
 export default withApiSession(
-  withHandler({ methods: ['POST'], privateMethods: ['POST'], handler })
+  withHandler({ methods: ['GET', 'POST'], privateMethods: ['POST'], handler })
 );
