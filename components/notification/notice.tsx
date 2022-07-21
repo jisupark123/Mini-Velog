@@ -3,11 +3,13 @@ import React, { useEffect } from 'react';
 import styles from './notice.module.scss';
 
 interface NoticeProps {
-  show: boolean;
-  isSuccessed: boolean;
-  header: string;
-  message: string;
-  closeNotice: () => void;
+  ctx: {
+    show: boolean;
+    isSuccessed: boolean;
+    header: string;
+    message: string;
+    close: () => void;
+  };
 }
 
 export const initialNotice = {
@@ -34,21 +36,16 @@ const variants: Variants = {
   },
 };
 
-const Notice: React.FC<NoticeProps> = ({
-  show,
-  isSuccessed,
-  header,
-  message,
-  closeNotice,
-}) => {
+const Notice: React.FC<NoticeProps> = ({ ctx }) => {
+  const { show, isSuccessed, header, message, close } = ctx;
   useEffect(() => {
     if (show) {
       setTimeout(() => {
         console.log('aa');
-        closeNotice();
+        close();
       }, 3000);
     }
-  }, [closeNotice, show]);
+  }, [close, show]);
   return (
     <AnimatePresence>
       {show && (
@@ -63,7 +60,7 @@ const Notice: React.FC<NoticeProps> = ({
         >
           <div className={styles.header}>
             <div className={styles.result}>{header}</div>
-            <button onClick={closeNotice}>✕</button>
+            <button onClick={close}>✕</button>
           </div>
           <div className={styles.message}>{message}</div>
         </motion.div>

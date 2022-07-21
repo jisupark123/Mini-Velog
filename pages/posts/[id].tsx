@@ -2,7 +2,7 @@ import { Comment, Image, Post, Tag, User } from '@prisma/client';
 import TextareaAutosize from 'react-textarea-autosize';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import Link from 'next/link';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import Layout from '../../components/layouts/layout';
 import client from '../../lib/server/client';
 import styles from './[id].module.scss';
@@ -16,6 +16,7 @@ import { ResponseType } from '../../lib/server/withHandler';
 import { useRouter } from 'next/router';
 import Notice, { initialNotice } from '../../components/notification/notice';
 import MakePost, { IPost } from '../../components/newPost/make-post';
+import NoticeCtx from '../../store/notice-context';
 
 interface CommentWithUser extends Comment {
   user: User;
@@ -53,8 +54,8 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
     },
   };
   const router = useRouter();
+  const noticeCtx = useContext(NoticeCtx);
   const { user } = useUser();
-  const [notice, setNotice] = useState(initialNotice);
   const [confirm, setConfirm] = useState(initialConfirm);
   const [updatePost, setUpdatePost] = useState(initialUpdatePost);
   const [comments, setComments] = useState(post.comments);
@@ -100,13 +101,10 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
     console.log('click');
     const comment = newCommentRef.current?.value.trim();
     if (!comment?.length) {
-      setNotice((prev) => ({
-        ...prev,
-        show: true,
-        isSuccessed: false,
+      noticeCtx?.failed({
         header: 'Error',
         message: '댓글을 작성하는데 실패했습니다.',
-      }));
+      });
       return;
     }
     addComment({ postId: post.id, comment });
@@ -121,23 +119,17 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
       method: 'DELETE',
     });
     if (response.ok) {
-      setNotice((prev) => ({
-        ...prev,
-        show: true,
-        isSuccessed: true,
+      noticeCtx?.successed({
         header: 'Success',
         message: '댓글을 삭제했습니다.',
-      }));
+      });
       return;
     }
     if (!response.ok) {
-      setNotice((prev) => ({
-        ...prev,
-        show: true,
-        isSuccessed: false,
+      noticeCtx?.failed({
         header: 'Error',
-        message: 'error code:500',
-      }));
+        message: 'Error code:500',
+      });
       return;
     }
   }
@@ -153,13 +145,13 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
   }, [addCommentData, addCommentError]);
   return (
     <div className={styles.wrapper}>
-      <Notice
+      {/* <Notice
         show={notice.show}
         isSuccessed={notice.isSuccessed}
         header={notice.header}
         message={notice.message}
         closeNotice={() => setNotice(initialNotice)}
-      />
+      /> */}
       <Layout>
         {confirm.show && (
           <Confirm

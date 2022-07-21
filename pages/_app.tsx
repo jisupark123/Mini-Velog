@@ -4,6 +4,9 @@ import type { AppProps } from 'next/app';
 import Script from 'next/script';
 import { SWRConfig } from 'swr';
 import NoticeProvider from '../store/notice-provider';
+import { useContext } from 'react';
+import NoticeCtx from '../store/notice-context';
+import Notice from '../components/notification/notice';
 
 declare global {
   interface Window {
@@ -11,6 +14,8 @@ declare global {
   }
 }
 function App({ Component, pageProps }: AppProps) {
+  const noticeCtx = useContext(NoticeCtx);
+
   function kakaoInit() {
     window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_JS_KEY);
     console.log(window.Kakao.isInitialized());
@@ -25,6 +30,7 @@ function App({ Component, pageProps }: AppProps) {
     >
       <NoticeProvider>
         <div id='overlay'></div>
+        {noticeCtx && <Notice ctx={noticeCtx} />}
         <Component {...pageProps} />
         <Script
           src='https://developers.kakao.com/sdk/js/kakao.js'
