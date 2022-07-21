@@ -1,16 +1,7 @@
 import { AnimatePresence, motion, Variants } from 'framer-motion';
 import React, { useEffect } from 'react';
+import { useNotice } from '../../store/notice-context';
 import styles from './notice.module.scss';
-
-interface NoticeProps {
-  ctx: {
-    show: boolean;
-    isSuccessed: boolean;
-    header: string;
-    message: string;
-    close: () => void;
-  };
-}
 
 export const initialNotice = {
   show: false,
@@ -36,8 +27,9 @@ const variants: Variants = {
   },
 };
 
-const Notice: React.FC<NoticeProps> = ({ ctx }) => {
-  const { show, isSuccessed, header, message, close } = ctx;
+const Notice: React.FC = () => {
+  const notice = useNotice();
+  const { show, isSuccessed, header, message, close } = notice;
   useEffect(() => {
     if (show) {
       setTimeout(() => {

@@ -16,7 +16,7 @@ import { ResponseType } from '../../lib/server/withHandler';
 import { useRouter } from 'next/router';
 import Notice, { initialNotice } from '../../components/notification/notice';
 import MakePost, { IPost } from '../../components/newPost/make-post';
-import NoticeCtx from '../../store/notice-context';
+import { useNotice } from '../../store/notice-context';
 
 interface CommentWithUser extends Comment {
   user: User;
@@ -54,7 +54,7 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
     },
   };
   const router = useRouter();
-  const noticeCtx = useContext(NoticeCtx);
+  const notice = useNotice();
   const { user } = useUser();
   const [confirm, setConfirm] = useState(initialConfirm);
   const [updatePost, setUpdatePost] = useState(initialUpdatePost);
@@ -101,7 +101,7 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
     console.log('click');
     const comment = newCommentRef.current?.value.trim();
     if (!comment?.length) {
-      noticeCtx?.failed({
+      notice.failed({
         header: 'Error',
         message: '댓글을 작성하는데 실패했습니다.',
       });
@@ -119,14 +119,14 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
       method: 'DELETE',
     });
     if (response.ok) {
-      noticeCtx?.successed({
+      notice.successed({
         header: 'Success',
         message: '댓글을 삭제했습니다.',
       });
       return;
     }
     if (!response.ok) {
-      noticeCtx?.failed({
+      notice.failed({
         header: 'Error',
         message: 'Error code:500',
       });
