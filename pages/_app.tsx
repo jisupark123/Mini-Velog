@@ -3,6 +3,7 @@ import '../styles/globals.scss';
 import type { AppProps } from 'next/app';
 import Script from 'next/script';
 import { SWRConfig } from 'swr';
+import NoticeProvider from '../store/notice-provider';
 
 declare global {
   interface Window {
@@ -22,12 +23,14 @@ function App({ Component, pageProps }: AppProps) {
           fetch(url).then((response) => response.json()),
       }}
     >
-      <div id='overlay'></div>
-      <Component {...pageProps} />
-      <Script
-        src='https://developers.kakao.com/sdk/js/kakao.js'
-        onLoad={kakaoInit}
-      ></Script>
+      <NoticeProvider>
+        <div id='overlay'></div>
+        <Component {...pageProps} />
+        <Script
+          src='https://developers.kakao.com/sdk/js/kakao.js'
+          onLoad={kakaoInit}
+        ></Script>
+      </NoticeProvider>
     </SWRConfig>
   );
 }

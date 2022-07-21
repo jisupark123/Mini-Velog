@@ -4,6 +4,9 @@ export function cls(...classNames: string[]) {
 }
 
 export function getTags(tags: string) {
+  if (!tags) {
+    return [];
+  }
   const res = tags
     .replace(/\s+/g, ' ') // '   ' => ' '
     .split(',')

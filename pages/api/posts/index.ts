@@ -4,7 +4,7 @@ import client from '../../../lib/server/client';
 import withHandler from '../../../lib/server/withHandler';
 import { withApiSession } from '../../../lib/server/withSession';
 
-interface PostRequestBody {
+export interface PostRequestBody {
   body: {
     title: string;
     subTitle: string;
@@ -48,7 +48,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         contents,
         tags: {
           create: tags.map((tag) => ({
-            name: tag,
+            tag: tag,
           })),
         },
         images: {

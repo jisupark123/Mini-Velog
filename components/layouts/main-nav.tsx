@@ -2,9 +2,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import useUser from '../../lib/client/useUser';
-import New from '../newPost/new';
 import styles from './main-nav.module.scss';
 import ModeChangeBtn from '../btn/mode-change-btn';
+import MakePost from '../newPost/make-post';
 
 interface MainNavProps {
   onlyLogo?: boolean;
@@ -33,7 +33,7 @@ const MainNav: React.FC<MainNavProps> = ({
 
   return (
     <div className={styles.container}>
-      {showNewPost && <New closeNewPost={closeNewPost} />}
+      {showNewPost && <MakePost closeNewPost={closeNewPost} update={false} />}
       <div className={styles.nav}>
         <div className={styles.logo}>
           <Link href='/'>

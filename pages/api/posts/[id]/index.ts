@@ -1,7 +1,9 @@
+import { PostRequestBody } from './../index';
 import { Post } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import client from '../../../../lib/server/client';
 import withHandler, { ResponseType } from '../../../../lib/server/withHandler';
+import { withApiSession } from '../../../../lib/server/withSession';
 
 export interface PostDetailResponse extends ResponseType {
   post: Post;
@@ -24,6 +26,47 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     });
     return res.json({ ok: true, post });
   }
+
+  // 게시물 수정
+  if (req.method === 'POST') {
+    const {
+      body: {
+        title,
+        subTitle,
+        tags,
+        contents,
+        images,
+        showLikes,
+        allowComments,
+      },
+      session: { user },
+    }: PostRequestBody = req;
+
+    await client.post.update({
+      where: { id: +postId },
+      data: {
+        title,
+        subTitle,
+        contents,
+        tags: {
+          deleteMany: {},
+          create: tags.map((tag) => ({
+            tag: tag,
+          })),
+        },
+        images: {
+          deleteMany: {},
+          create: images.map((url) => ({
+            url,
+          })),
+        },
+        showLikes,
+        allowComments,
+      },
+    });
+    return res.json({ ok: true });
+  }
+
   if (req.method === 'DELETE') {
     await client.post.delete({
       where: { id: +postId },
@@ -32,4 +75,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default withHandler({ methods: ['GET', 'DELETE'], handler });
+export default withApiSession(
+  withHandler({
+    methods: ['GET', 'POST', 'DELETE'],
+    privateMethods: ['POST', 'DELETE'],
+    handler,
+  })
+);

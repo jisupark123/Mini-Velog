@@ -1,31 +1,32 @@
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import useMutation from '../../lib/client/useMutation';
-import useUser from '../../lib/client/useUser';
 import { getTags } from '../../lib/client/utils';
 import DisplayLength from '../ui/\bdisplay-length';
 import InputHelper from '../notification/input-helper';
 import Overlay from '../ui/overlay';
 import SettingLayout from '../layouts/setting-layout';
 import BasicModal from './basic-modal';
-import styles from './new.module.scss';
+import styles from './make-post.module.scss';
 import Notice, { initialNotice } from '../notification/notice';
 
 interface Props {
+  update: boolean;
+  prevPost?: IPost;
   closeNewPost: () => void;
 }
 
 interface IForm {
   title: string;
   subTitle: string;
-  tag: string;
+  tags: string;
   contents: string;
   image: FileList;
 }
 
-export interface INewPost {
+export interface IPost {
   title: string;
   subTitle: string;
   tags: string[];
@@ -41,10 +42,10 @@ interface MutationResult {
 
 const titleLimit = 30;
 const subTitleLimit = 150;
-const contentsLimit = 2000;
+const contentsLimit = 10000;
 const tagLimit = 10;
 
-const New: React.FC<Props> = ({ closeNewPost }) => {
+const MakePost: React.FC<Props> = ({ closeNewPost, update, prevPost }) => {
   const router = useRouter();
 
   const [page, setPage] = useState(1); // 현재 페이지
@@ -58,11 +59,13 @@ const New: React.FC<Props> = ({ closeNewPost }) => {
   const { register, watch, handleSubmit, formState, setFocus, setValue } =
     useForm<IForm>();
 
-  const { title, subTitle, contents } = watch();
-  const image = watch('image');
+  const { title, subTitle, contents, tags, image } = watch();
 
   const [uploadPost, { loading, data: uploadResponse, error }] =
-    useMutation<MutationResult>({ method: 'POST', url: 'api/posts' });
+    useMutation<MutationResult>({
+      method: 'POST',
+      url: update ? `/api/posts/${router.query.id}` : '/api/posts',
+    });
 
   useEffect(() => {
     console.log('image change');
@@ -74,15 +77,36 @@ const New: React.FC<Props> = ({ closeNewPost }) => {
 
   useEffect(() => {
     if (uploadResponse?.ok) {
-      // setNotice({
-      //   show: true,
-      //   isSuccessed: true,
-      //   contents: '성공적으로 업로드되었습니다.',
-      // });
+      setNotice({
+        show: true,
+        isSuccessed: true,
+        header: 'Success',
+        message: '성공적으로 업로드되었습니다.',
+      });
       closeNewPost();
       router.push('/');
     }
   }, [uploadResponse, closeNewPost, router]);
+
+  const postInit = useCallback(
+    function (post: IPost) {
+      const tags = post.tags.join(',');
+      setValue('title', post.title);
+      setValue('tags', tags);
+      setValue('contents', post.contents);
+      setValue('subTitle', post.subTitle);
+      setShowLikes(post.showLikes);
+      setAllowComments(post.allowComments);
+      // setValue('image', post.images); 나중에 이미지도 넣어줘야 함
+    },
+    [setValue]
+  );
+
+  useEffect(() => {
+    if (update && prevPost) {
+      postInit(prevPost);
+    }
+  }, [postInit, prevPost, update]);
 
   function validateForm(data: IForm) {
     function noticeFail(msg: string) {
@@ -101,8 +125,8 @@ const New: React.FC<Props> = ({ closeNewPost }) => {
       noticeFail(`제목 글자 수 초과 (${titleLimit}자 제한)`);
       return false;
     }
-    if (getTags(data.tag).length > tagLimit) {
-      noticeFail('태그는 최대 10개까지 입력할 수 있습니다.');
+    if (getTags(data.tags).length > tagLimit) {
+      noticeFail(`태그는 최대 ${tagLimit}개까지 입력할 수 있습니다.`);
       return false;
     }
     if (data.contents.trim().length > contentsLimit) {
@@ -118,10 +142,10 @@ const New: React.FC<Props> = ({ closeNewPost }) => {
 
   function postUploadHandler(data: IForm) {
     if (!validateForm(data)) return false;
-    const newPost: INewPost = {
+    const newPost: IPost = {
       title: data.title,
       subTitle: data.subTitle,
-      tags: getTags(data.tag),
+      tags: getTags(data.tags),
       contents: data.contents,
       images: [imagePreview],
       showLikes,
@@ -146,11 +170,11 @@ const New: React.FC<Props> = ({ closeNewPost }) => {
 
   function appendTag(event: React.FormEvent<HTMLButtonElement>) {
     event.preventDefault();
-    const text = watch().tag.trim();
+    const text = watch().tags.trim();
     if (text.slice(-1) !== '#') {
-      setValue('tag', `${text}${text.length > 0 ? ' ' : ''}#`);
+      setValue('tags', `${text}${text.length > 0 ? ' ' : ''}#`);
     }
-    setFocus('tag');
+    setFocus('tags');
   }
 
   function handleDisplayTag(tagInput: string) {
@@ -186,7 +210,7 @@ const New: React.FC<Props> = ({ closeNewPost }) => {
       >
         {page === 1 && (
           <BasicModal
-            header='새 게시물 만들기'
+            header={update ? '게시물 수정하기' : '새 게시물 만들기'}
             rightBtn={{ title: '다음', onClickHandler: handleSetPage2 }}
           >
             <div className={styles.container1}>
@@ -205,16 +229,19 @@ const New: React.FC<Props> = ({ closeNewPost }) => {
               </div>
               <div className={styles.tag}>
                 <textarea
-                  {...register('tag', {
+                  {...register('tags', {
                     onBlur: () => setShowTagInputHelper(false),
-                    onChange: () => handleDisplayTag(watch('tag')),
+                    onChange: () => handleDisplayTag(watch('tags')),
                   })}
                   placeholder='태그를 달아주세요'
                   onFocus={() => setShowTagInputHelper(true)}
                 ></textarea>
-                {/* <div className={styles['tag-length']}>
-                  <DisplayLength limit={10} value={0} />
-                </div> */}
+                <div className={styles['tag-length']}>
+                  <DisplayLength
+                    limit={tagLimit}
+                    value={getTags(tags).length || 0}
+                  />
+                </div>
                 <InputHelper
                   show={showTagInputHelper}
                   advice={
@@ -233,12 +260,6 @@ const New: React.FC<Props> = ({ closeNewPost }) => {
                   {...register('contents')}
                   placeholder='멘트 작성...'
                 ></textarea>
-                <div className={styles['contents-length']}>
-                  <DisplayLength
-                    limit={contentsLimit}
-                    value={contents?.trim().length || 0}
-                  />
-                </div>
               </div>
             </div>
           </BasicModal>
@@ -246,10 +267,10 @@ const New: React.FC<Props> = ({ closeNewPost }) => {
         {page === 2 && (
           <BasicModal
             wide={true}
-            header='새 게시물 만들기'
+            header={update ? '게시물 수정하기' : '새 게시물 만들기'}
             backBtn={{ onClickHandler: goToPreviousPage }}
             rightBtn={{
-              title: '공유하기',
+              title: update ? '완료' : '공유하기',
               onClickHandler: () => handleSubmit(postUploadHandler),
             }}
           >
@@ -342,4 +363,4 @@ const New: React.FC<Props> = ({ closeNewPost }) => {
   );
 };
 
-export default New;
+export default MakePost;

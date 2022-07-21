@@ -15,6 +15,7 @@ import { PostCommentResponse } from '../api/comments';
 import { ResponseType } from '../../lib/server/withHandler';
 import { useRouter } from 'next/router';
 import Notice, { initialNotice } from '../../components/notification/notice';
+import MakePost, { IPost } from '../../components/newPost/make-post';
 
 interface CommentWithUser extends Comment {
   user: User;
@@ -31,13 +32,31 @@ interface PostDetailProps {
   post: WithPost;
 }
 
+interface IUpdatePost {
+  show: boolean;
+  prev: IPost;
+}
+
 const textareaFontSize = 17; //px
 
 const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
+  const initialUpdatePost: IUpdatePost = {
+    show: false,
+    prev: {
+      title: post.title,
+      tags: post.tags.map((tag) => tag.tag),
+      contents: post.contents,
+      images: [''],
+      subTitle: post.subTitle,
+      showLikes: post.showLikes,
+      allowComments: post.allowComments,
+    },
+  };
   const router = useRouter();
   const { user } = useUser();
   const [notice, setNotice] = useState(initialNotice);
   const [confirm, setConfirm] = useState(initialConfirm);
+  const [updatePost, setUpdatePost] = useState(initialUpdatePost);
   const [comments, setComments] = useState(post.comments);
   const [textareaHeight, setTextareaHeight] = useState(70);
   const [
@@ -61,6 +80,10 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
       message: '정말로 삭제하시겠습니까?',
       handleOk: handleDeletePost,
     });
+  }
+
+  function handleUpdatePost() {
+    setUpdatePost((prev) => ({ ...prev, show: true }));
   }
 
   async function handleDeletePost() {
@@ -149,6 +172,13 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
         )}
 
         <div className={styles.container}>
+          {updatePost.show && (
+            <MakePost
+              update={true}
+              prevPost={updatePost.prev}
+              closeNewPost={() => setUpdatePost(initialUpdatePost)}
+            />
+          )}
           <div className={styles.header}>
             <h1>{post.title}</h1>
             <div className={styles.metadata}>
@@ -161,7 +191,7 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
               </div>
               {post.userId === user?.id && (
                 <div className={styles.manage}>
-                  <button>수정</button>
+                  <button onClick={handleUpdatePost}>수정</button>
                   <button onClick={showDeleteConfirm}>삭제</button>
                 </div>
               )}
@@ -169,7 +199,7 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
             <div className={styles.tags}>
               {post.tags.map((tag, idx) => (
                 <Link key={idx} href='#'>
-                  <a className={styles.tag}>{`#${tag.name}`}</a>
+                  <a className={styles.tag}>{`#${tag.tag}`}</a>
                 </Link>
               ))}
             </div>
