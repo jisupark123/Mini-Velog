@@ -15,9 +15,15 @@
     color: $white;
   }
 }
+.backdrop-onTop {
+  z-index: $onTop-backdrop-z_index;
+}
 
 .modal {
   position: fixed;
-
   z-index: $modal-z_index;
+}
+
+.modal-onTop {
+  z-index: $onTop-modal-z_index;
 }

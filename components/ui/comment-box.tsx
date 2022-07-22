@@ -1,7 +1,8 @@
 import { Comment, User } from '@prisma/client';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { getDateDiff } from '../../lib/client/utils';
+import { useNotice } from '../../store/notice-context';
 import styles from './comment-box.module.scss';
 
 interface CommentWithUser extends Comment {
@@ -11,20 +12,42 @@ interface CommentWithUser extends Comment {
 interface CommentBoxProps {
   comment: CommentWithUser;
   userId: number | undefined;
+  onUpdate: (
+    commentId: number,
+    commentOwnerId: number,
+    newComment: string
+  ) => void;
   onDelete: (commentId: number, commentOwnerId: number) => void;
 }
 
 const CommentBox: React.FC<CommentBoxProps> = ({
   comment,
   userId,
+  onUpdate,
   onDelete,
 }) => {
   const [showOptions, setShowOptions] = useState(false);
+  const [commentUpdating, setCommentUpdating] = useState(false);
+  const { failed } = useNotice();
+  const updatingCommentRef = useRef<HTMLTextAreaElement>(null);
 
   function toggleShowOptions() {
     setShowOptions((prev) => !prev);
   }
-  function handleUpdateComment() {}
+  function handleUpdateBtnClick() {
+    setShowOptions(false);
+    setCommentUpdating(true);
+  }
+  function handleUpdateComment() {
+    const newComment = updatingCommentRef.current?.value.trim();
+    if (!newComment?.length) {
+      failed('댓글을 작성하는데 실패했습니다.');
+      return;
+    }
+    setShowOptions(false);
+    setCommentUpdating(false);
+    onUpdate(comment.id, comment.userId, newComment);
+  }
   function handleDeleteComment() {
     setShowOptions(false);
     onDelete(comment.id, comment.userId);
@@ -73,27 +96,44 @@ const CommentBox: React.FC<CommentBoxProps> = ({
                     <li>
                       <button
                         disabled={comment.userId !== userId}
-                        onClick={handleUpdateComment}
+                        onClick={handleUpdateBtnClick}
                       >
                         수정
                       </button>
                     </li>
-                    <li>
-                      <button
-                        disabled={comment.userId !== userId}
-                        onClick={handleDeleteComment}
-                      >
-                        삭제
-                      </button>
-                    </li>
+                    {!commentUpdating && (
+                      <li>
+                        <button
+                          disabled={comment.userId !== userId}
+                          onClick={handleDeleteComment}
+                        >
+                          삭제
+                        </button>
+                      </li>
+                    )}
                   </ul>
                 )}
               </div>
             </div>
             <div className={styles.contents}>
-              <p>{comment.comment}</p>
+              {commentUpdating ? (
+                <textarea
+                  ref={updatingCommentRef}
+                  defaultValue={comment.comment}
+                  spellCheck='false'
+                  autoFocus
+                ></textarea>
+              ) : (
+                <p>{comment.comment}</p>
+              )}
             </div>
           </div>
+          {commentUpdating && (
+            <div className={styles['update-btn']}>
+              <button onClick={() => setCommentUpdating(false)}>취소</button>{' '}
+              <button onClick={handleUpdateComment}>업데이트</button>
+            </div>
+          )}
         </main>
       </div>
     </div>

@@ -44,7 +44,7 @@ model Post {
   userId        Int
   title         String    @db.VarChar(50)
   subTitle      String    @db.VarChar(200)
-  contents      String    @db.VarChar(2000)
+  contents      String    @db.VarChar(10000)
   tags          Tag[]
   images        Image[]
   likes         Int       @default(0) // 좋아요

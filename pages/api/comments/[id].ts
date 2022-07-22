@@ -11,11 +11,11 @@ async function handler(
   if (req.method === 'POST') {
     const {
       query: { id },
-      body: { comment },
+      body: { newComment },
     } = req;
     await client.comment.update({
       where: { id: +id },
-      data: { comment },
+      data: { comment: newComment },
     });
     return res.json({ ok: true });
   }

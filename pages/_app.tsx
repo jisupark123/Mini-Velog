@@ -6,7 +6,9 @@ import { SWRConfig } from 'swr';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useNotice } from '../store/notice-context';
 import Notice from '../components/notification/notice';
+import Confirm from '../components/ui/confirm';
 import NoticeProvider from '../store/notice-context';
+import ConfirmProvider, { useConfirm } from '../store/confirm-context';
 
 declare global {
   interface Window {
@@ -14,16 +16,10 @@ declare global {
   }
 }
 function App({ Component, pageProps }: AppProps) {
-  const notice = useNotice();
-
   function kakaoInit() {
     window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_JS_KEY);
     console.log(window.Kakao.isInitialized());
   }
-
-  useEffect(() => {
-    console.log(notice);
-  }, [notice]);
 
   return (
     <SWRConfig
@@ -33,13 +29,16 @@ function App({ Component, pageProps }: AppProps) {
       }}
     >
       <NoticeProvider>
-        <div id='overlay'></div>
-        <Notice />
-        <Component {...pageProps} />
-        <Script
-          src='https://developers.kakao.com/sdk/js/kakao.js'
-          onLoad={kakaoInit}
-        ></Script>
+        <ConfirmProvider>
+          <div id='overlay'></div>
+          <Notice />
+          <Confirm />
+          <Component {...pageProps} />
+          <Script
+            src='https://developers.kakao.com/sdk/js/kakao.js'
+            onLoad={kakaoInit}
+          ></Script>
+        </ConfirmProvider>
       </NoticeProvider>
     </SWRConfig>
   );

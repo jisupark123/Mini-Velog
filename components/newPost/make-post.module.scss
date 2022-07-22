@@ -1,13 +1,13 @@
-.notice {
-  position: fixed;
-  z-index: 1000;
-  top: 50px;
-  right: 50px;
+@mixin textarea-setting {
+  all: unset;
+  box-sizing: border-box;
 }
+
 .container1 {
   overflow-y: scroll;
   height: calc(100% - $modal-header-height);
   textarea {
+    @include textarea-setting;
     width: 100%;
     display: block;
   }
@@ -77,6 +77,9 @@
   display: flex;
   width: 100%;
   height: calc(100% - $modal-header-height);
+  textarea {
+    @include textarea-setting;
+  }
   .image {
     position: relative;
     width: 90%;

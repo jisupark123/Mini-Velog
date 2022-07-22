@@ -1,22 +1,20 @@
 import { Comment, Image, Post, Tag, User } from '@prisma/client';
-import TextareaAutosize from 'react-textarea-autosize';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import Link from 'next/link';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Layout from '../../components/layouts/layout';
 import client from '../../lib/server/client';
 import styles from './[id].module.scss';
 import CommentBox from '../../components/ui/comment-box';
-import Confirm, { initialConfirm } from '../../components/ui/confirm';
 import useMutation from '../../lib/client/useMutation';
 import useUser from '../../lib/client/useUser';
 import LoadingSvg from '../../components/svg/loading-svg';
 import { PostCommentResponse } from '../api/comments';
 import { ResponseType } from '../../lib/server/withHandler';
 import { useRouter } from 'next/router';
-import Notice, { initialNotice } from '../../components/notification/notice';
 import MakePost, { IPost } from '../../components/newPost/make-post';
 import { useNotice } from '../../store/notice-context';
+import { useConfirm } from '../../store/confirm-context';
 
 interface CommentWithUser extends Comment {
   user: User;
@@ -38,8 +36,6 @@ interface IUpdatePost {
   prev: IPost;
 }
 
-const textareaFontSize = 17; //px
-
 const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
   const initialUpdatePost: IUpdatePost = {
     show: false,
@@ -56,10 +52,9 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
   const router = useRouter();
   const notice = useNotice();
   const { user } = useUser();
-  const [confirm, setConfirm] = useState(initialConfirm);
+  const { showConfirm } = useConfirm();
   const [updatePost, setUpdatePost] = useState(initialUpdatePost);
   const [comments, setComments] = useState(post.comments);
-  const [textareaHeight, setTextareaHeight] = useState(70);
   const [
     addComment,
     {
@@ -76,8 +71,7 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
   const newCommentRef = useRef<HTMLTextAreaElement>(null);
 
   function showDeleteConfirm() {
-    setConfirm({
-      show: true,
+    showConfirm({
       message: '정말로 삭제하시겠습니까?',
       handleOk: handleDeletePost,
     });
@@ -88,7 +82,6 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
   }
 
   async function handleDeletePost() {
-    setConfirm(initialConfirm);
     const response: ResponseType = await fetch(`/api/posts/${post.id}`, {
       method: 'DELETE',
     });
@@ -98,16 +91,47 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
   }
 
   function handleAddNewComment() {
-    console.log('click');
     const comment = newCommentRef.current?.value.trim();
     if (!comment?.length) {
-      notice.failed({
-        header: 'Error',
-        message: '댓글을 작성하는데 실패했습니다.',
-      });
+      notice.failed('댓글을 작성하는데 실패했습니다.');
       return;
     }
     addComment({ postId: post.id, comment });
+  }
+  async function handleUpdateComment(
+    commentId: number,
+    commentOwnerId: number,
+    newComment: string
+  ) {
+    if (user?.id !== commentOwnerId) return;
+    let commentIndex = -1;
+    for (let i = 0; i < comments.length; i++) {
+      if (comments[i].id === commentId) {
+        commentIndex = i;
+        break;
+      }
+    }
+    if (commentIndex === -1) {
+      console.log('Error: 수정할 댓글 없음');
+      return;
+    }
+    comments[commentIndex].comment = newComment;
+    setComments(comments);
+    const response: ResponseType = await fetch(`/api/comments/${commentId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ newComment }),
+    });
+    if (response.ok) {
+      notice.successed('댓글을 수정했습니다.');
+      return;
+    }
+    if (!response.ok) {
+      notice.failed('Error code:500');
+      return;
+    }
   }
   async function handleDeleteComment(
     commentId: number,
@@ -119,17 +143,11 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
       method: 'DELETE',
     });
     if (response.ok) {
-      notice.successed({
-        header: 'Success',
-        message: '댓글을 삭제했습니다.',
-      });
+      notice.successed('댓글을 삭제했습니다.');
       return;
     }
     if (!response.ok) {
-      notice.failed({
-        header: 'Error',
-        message: 'Error code:500',
-      });
+      notice.failed('Error code:500');
       return;
     }
   }
@@ -145,24 +163,7 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
   }, [addCommentData, addCommentError]);
   return (
     <div className={styles.wrapper}>
-      {/* <Notice
-        show={notice.show}
-        isSuccessed={notice.isSuccessed}
-        header={notice.header}
-        message={notice.message}
-        closeNotice={() => setNotice(initialNotice)}
-      /> */}
       <Layout>
-        {confirm.show && (
-          <Confirm
-            message={confirm.message}
-            handleCancel={() =>
-              setConfirm((prev) => ({ ...prev, show: false }))
-            }
-            handleOk={confirm.handleOk}
-          />
-        )}
-
         <div className={styles.container}>
           {updatePost.show && (
             <MakePost
@@ -245,15 +246,13 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
               <div className={styles['new-comment']}>
                 {user ? (
                   <>
-                    <textarea
-                      ref={newCommentRef}
-                      placeholder='댓글을 작성하세요'
-                      style={{
-                        height: `${textareaHeight}px`,
-                        fontSize: `${textareaFontSize}px`,
-                      }}
-                      spellCheck='false'
-                    ></textarea>
+                    <div className={styles['textarea-wrapper']}>
+                      <textarea
+                        ref={newCommentRef}
+                        placeholder='댓글을 작성하세요'
+                        spellCheck='false'
+                      ></textarea>
+                    </div>
                     {/* <TextareaAutosize placeholder='댓글을 작성하세요' minRows={10} /> */}
                     <div className={styles['post-btn']}>
                       <button onClick={handleAddNewComment}>댓글 작성</button>
@@ -278,6 +277,7 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
                         key={i}
                         comment={comment}
                         userId={user?.id}
+                        onUpdate={handleUpdateComment}
                         onDelete={handleDeleteComment}
                       />
                     ))}

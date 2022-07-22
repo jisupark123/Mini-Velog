@@ -6,6 +6,7 @@ interface BackDropProps {
   hasCloseBtn?: boolean;
   onlyCloseWithBtn?: boolean;
   onCloseHandler?: () => void;
+  onTop?: boolean;
 }
 
 interface OverlayProps extends BackDropProps {
@@ -14,16 +15,18 @@ interface OverlayProps extends BackDropProps {
 
 interface ModalProps {
   children: ReactNode;
+  onTop?: boolean;
 }
 
 const BackDrop: React.FC<BackDropProps> = ({
   hasCloseBtn,
   onlyCloseWithBtn,
   onCloseHandler,
+  onTop,
 }) => {
   return (
     <div
-      className={styles.backdrop}
+      className={`${styles.backdrop} ${onTop ? styles['backdrop-onTop'] : ''}`}
       onClick={onlyCloseWithBtn ? () => {} : onCloseHandler}
     >
       {hasCloseBtn && (
@@ -35,8 +38,12 @@ const BackDrop: React.FC<BackDropProps> = ({
   );
 };
 
-const Modal: React.FC<ModalProps> = ({ children }) => {
-  return <div className={styles.modal}>{children}</div>;
+const Modal: React.FC<ModalProps> = ({ children, onTop }) => {
+  return (
+    <div className={`${styles.modal} ${onTop ? styles['modal-onTop'] : ''}`}>
+      {children}
+    </div>
+  );
 };
 
 const Overlay: React.FC<OverlayProps> = (props) => {
@@ -52,11 +59,15 @@ const Overlay: React.FC<OverlayProps> = (props) => {
             onCloseHandler={props.onCloseHandler}
             hasCloseBtn={props.hasCloseBtn}
             onlyCloseWithBtn={props.onlyCloseWithBtn}
+            onTop={props.onTop}
           />,
           portalElement
         )}
       {portalElement &&
-        ReactDOM.createPortal(<Modal>{props.children}</Modal>, portalElement)}
+        ReactDOM.createPortal(
+          <Modal onTop={props.onTop}>{props.children}</Modal>,
+          portalElement
+        )}
     </>
   );
 };

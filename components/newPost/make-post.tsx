@@ -10,7 +10,8 @@ import Overlay from '../ui/overlay';
 import SettingLayout from '../layouts/setting-layout';
 import BasicModal from './basic-modal';
 import styles from './make-post.module.scss';
-import Notice, { initialNotice } from '../notification/notice';
+import { useNotice } from '../../store/notice-context';
+import { useConfirm } from '../../store/confirm-context';
 
 interface Props {
   update: boolean;
@@ -47,14 +48,14 @@ const tagLimit = 10;
 
 const MakePost: React.FC<Props> = ({ closeNewPost, update, prevPost }) => {
   const router = useRouter();
-
+  const { showConfirm } = useConfirm();
   const [page, setPage] = useState(1); // 현재 페이지
   const [showTagInputHelper, setShowTagInputHelper] = useState(false);
   const [tagPreview, setTagPreview] = useState(''); // 태그 미리보기
   const [imagePreview, setImagePreview] = useState('');
   const [showLikes, setShowLikes] = useState(true); // 좋아요, 조회수 숨기기
   const [allowComments, setAllowComments] = useState(true); // 댓글 허용
-  const [notice, setNotice] = useState(initialNotice);
+  const { successed, failed } = useNotice();
   // const imgInputRef = useRef<HTMLInputElement>(null);
   const { register, watch, handleSubmit, formState, setFocus, setValue } =
     useForm<IForm>();
@@ -77,16 +78,11 @@ const MakePost: React.FC<Props> = ({ closeNewPost, update, prevPost }) => {
 
   useEffect(() => {
     if (uploadResponse?.ok) {
-      setNotice({
-        show: true,
-        isSuccessed: true,
-        header: 'Success',
-        message: '성공적으로 업로드되었습니다.',
-      });
+      successed('성공적으로 업로드되었습니다.');
       closeNewPost();
       router.push('/');
     }
-  }, [uploadResponse, closeNewPost, router]);
+  }, [uploadResponse, closeNewPost, router, successed]);
 
   const postInit = useCallback(
     function (post: IPost) {
@@ -109,32 +105,24 @@ const MakePost: React.FC<Props> = ({ closeNewPost, update, prevPost }) => {
   }, [postInit, prevPost, update]);
 
   function validateForm(data: IForm) {
-    function noticeFail(msg: string) {
-      setNotice({
-        show: true,
-        isSuccessed: false,
-        header: 'Error',
-        message: msg,
-      });
-    }
     if (data.title.trim().length === 0) {
-      noticeFail('제목이 비어있습니다.');
+      failed('제목이 비어있습니다.');
       return false;
     }
     if (data.title.trim().length > titleLimit) {
-      noticeFail(`제목 글자 수 초과 (${titleLimit}자 제한)`);
+      failed(`제목 글자 수 초과 (${titleLimit}자 제한)`);
       return false;
     }
     if (getTags(data.tags).length > tagLimit) {
-      noticeFail(`태그는 최대 ${tagLimit}개까지 입력할 수 있습니다.`);
+      failed(`태그는 최대 ${tagLimit}개까지 입력할 수 있습니다.`);
       return false;
     }
     if (data.contents.trim().length > contentsLimit) {
-      noticeFail(`본문 글자 수 초과 (${contentsLimit}자 제한)`);
+      failed(`본문 글자 수 초과 (${contentsLimit}자 제한)`);
       return false;
     }
     if (data.subTitle.trim().length > subTitleLimit) {
-      noticeFail(`부제목 글자 수 초과 (${subTitleLimit}자 제한)`);
+      failed(`부제목 글자 수 초과 (${subTitleLimit}자 제한)`);
       return false;
     }
     return true;
@@ -154,7 +142,20 @@ const MakePost: React.FC<Props> = ({ closeNewPost, update, prevPost }) => {
     uploadPost(newPost);
   }
   function handleOverlayClose() {
-    closeNewPost();
+    if (
+      title?.length ||
+      subTitle?.length ||
+      contents?.length ||
+      tags?.length ||
+      image?.length
+    ) {
+      showConfirm({
+        message: '지금 나가면 변경사항이 저장되지 않습니다.',
+        handleOk: closeNewPost,
+      });
+    } else {
+      closeNewPost();
+    }
   }
 
   function goToPreviousPage() {
@@ -182,10 +183,6 @@ const MakePost: React.FC<Props> = ({ closeNewPost, update, prevPost }) => {
     setTagPreview(tags.map((tag) => `#${tag}`).join(' '));
   }
 
-  function closeNotice() {
-    setNotice(initialNotice);
-  }
-
   function handleSetPage2() {
     if (!subTitle?.length) {
       setValue('subTitle', contents?.slice(0, subTitleLimit));
@@ -195,14 +192,6 @@ const MakePost: React.FC<Props> = ({ closeNewPost, update, prevPost }) => {
 
   return (
     <Overlay onCloseHandler={handleOverlayClose} hasCloseBtn={true}>
-      <Notice
-        show={notice.show}
-        isSuccessed={notice.isSuccessed}
-        header={notice.header}
-        message={notice.message}
-        closeNotice={closeNotice}
-      />
-
       <form
         onSubmit={handleSubmit(postUploadHandler)}
         spellCheck={false}

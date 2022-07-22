@@ -25,15 +25,15 @@
 
     &:first-child {
       margin-right: 10px;
-      background-color: $gray;
+      background-color: $btn--gray;
       &:hover {
-        background-color: #68666b;
+        background-color: $btn--gray-hover;
       }
     }
     &:last-child {
       background-color: $blue;
       &:hover {
-        background-color: #4151e2;
+        background-color: $btn--blue-hover;
       }
     }
   }

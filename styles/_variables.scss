@@ -10,7 +10,9 @@ $card-padding: 1.5rem;
 $backdrop-z_index: 100;
 $modal-z_index: calc($backdrop-z_index + 1);
 $main-nav-z_index: 90;
-$notice-z_index: 110;
+$onTop-backdrop-z_index: 1000;
+$onTop-modal-z_index: 1001;
+$notice-z_index: 10000;
 
 // colors
 
@@ -42,3 +44,10 @@ $dark: #616063;
 $whiteSmoke: #f5f5f5;
 $cloud: #ecf0f1;
 $black: #000;
+
+// components
+
+$btn--blue: $blue;
+$btn--blue-hover: #4151e2;
+$btn--gray: $gray;
+$btn--gray-hover: #68666b;

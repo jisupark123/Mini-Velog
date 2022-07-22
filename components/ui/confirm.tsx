@@ -1,34 +1,24 @@
 import React from 'react';
+import { useConfirm } from '../../store/confirm-context';
 import styles from './confirm.module.scss';
 import Overlay from './overlay';
 
-interface ConfirmProps {
-  message: string;
-  handleCancel: () => void;
-  handleOk: () => void;
-}
-
-export const initialConfirm = {
-  show: false,
-  message: '',
-  handleOk: () => {},
-};
-
-const Comfirm: React.FC<ConfirmProps> = ({
-  message,
-  handleCancel,
-  handleOk,
-}) => {
+const Comfirm: React.FC = () => {
+  const { show, message, okClicked, cancelClicked } = useConfirm();
   return (
-    <Overlay onCloseHandler={handleCancel}>
-      <div className={styles.container}>
-        <div className={styles.question}>{message}</div>
-        <div className={styles.btns}>
-          <button onClick={handleCancel}>취소</button>
-          <button onClick={handleOk}>OK</button>
-        </div>
-      </div>
-    </Overlay>
+    <>
+      {show && (
+        <Overlay onCloseHandler={cancelClicked} onTop={true}>
+          <div className={styles.container}>
+            <div className={styles.question}>{message}</div>
+            <div className={styles.btns}>
+              <button onClick={cancelClicked}>취소</button>
+              <button onClick={okClicked}>OK</button>
+            </div>
+          </div>
+        </Overlay>
+      )}
+    </>
   );
 };
 

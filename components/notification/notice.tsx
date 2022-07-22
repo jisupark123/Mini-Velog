@@ -3,13 +3,6 @@ import React, { useEffect } from 'react';
 import { useNotice } from '../../store/notice-context';
 import styles from './notice.module.scss';
 
-export const initialNotice = {
-  show: false,
-  isSuccessed: true,
-  header: '',
-  message: '',
-};
-
 const variants: Variants = {
   initial: {
     opacity: 0,
@@ -28,7 +21,7 @@ const variants: Variants = {
 };
 
 const Notice: React.FC = () => {
-  const { show, isSuccessed, header, message, close } = useNotice();
+  const { show, isSuccessed, message, close } = useNotice();
   useEffect(() => {
     if (show) {
       setTimeout(() => {
@@ -50,7 +43,9 @@ const Notice: React.FC = () => {
           exit='exit'
         >
           <div className={styles.header}>
-            <div className={styles.result}>{header}</div>
+            <div className={styles.result}>
+              {isSuccessed ? 'Success' : 'Error'}
+            </div>
             <button onClick={close}>✕</button>
           </div>
           <div className={styles.message}>{message}</div>
