@@ -28,8 +28,7 @@ const variants: Variants = {
 };
 
 const Notice: React.FC = () => {
-  const notice = useNotice();
-  const { show, isSuccessed, header, message, close } = notice;
+  const { show, isSuccessed, header, message, close } = useNotice();
   useEffect(() => {
     if (show) {
       setTimeout(() => {

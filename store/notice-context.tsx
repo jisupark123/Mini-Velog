@@ -1,4 +1,4 @@
-import { createContext, Dispatch, useContext } from 'react';
+import { createContext, useContext } from 'react';
 import React, { useState } from 'react';
 
 interface State {
