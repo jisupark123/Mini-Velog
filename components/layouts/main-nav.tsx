@@ -7,6 +7,8 @@ import ModeChangeBtn from '../btn/mode-change-btn';
 import MakePost from '../newPost/make-post';
 import { IoPersonOutline } from 'react-icons/io5';
 import { BsPlusSquare } from 'react-icons/bs';
+import { useRecoilState } from 'recoil';
+import { showUserOptionsAtom } from '../../store/atom';
 
 interface MainNavProps {
   onlyLogo?: boolean;
@@ -22,7 +24,8 @@ const MainNav: React.FC<MainNavProps> = ({ onlyLogo = false }) => {
   const router = useRouter();
 
   const [showNewPost, setShowNewPost] = useState(false);
-  const [showUserOptions, setShowUserOptions] = useState(false);
+  const [showUserOptions, setShowUserOptions] =
+    useRecoilState(showUserOptionsAtom);
 
   const optionList: OptionList[] = [
     { name: 'My', link: `/users/${user?.id}` },

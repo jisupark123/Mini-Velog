@@ -9,6 +9,7 @@ import Notice from '../components/notification/notice';
 import Confirm from '../components/ui/confirm';
 import NoticeProvider from '../store/notice-context';
 import ConfirmProvider, { useConfirm } from '../store/confirm-context';
+import { RecoilRoot } from 'recoil';
 
 declare global {
   interface Window {
@@ -28,18 +29,20 @@ function App({ Component, pageProps }: AppProps) {
           fetch(url).then((response) => response.json()),
       }}
     >
-      <NoticeProvider>
-        <ConfirmProvider>
-          <div id='overlay'></div>
-          <Notice />
-          <Confirm />
-          <Component {...pageProps} />
-          <Script
-            src='https://developers.kakao.com/sdk/js/kakao.js'
-            onLoad={kakaoInit}
-          ></Script>
-        </ConfirmProvider>
-      </NoticeProvider>
+      <RecoilRoot>
+        <NoticeProvider>
+          <ConfirmProvider>
+            <div id='overlay'></div>
+            <Notice />
+            <Confirm />
+            <Component {...pageProps} />
+            <Script
+              src='https://developers.kakao.com/sdk/js/kakao.js'
+              onLoad={kakaoInit}
+            ></Script>
+          </ConfirmProvider>
+        </NoticeProvider>
+      </RecoilRoot>
     </SWRConfig>
   );
 }
