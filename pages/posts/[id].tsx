@@ -55,6 +55,8 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
   const { showConfirm } = useConfirm();
   const [updatePost, setUpdatePost] = useState(initialUpdatePost);
   const [comments, setComments] = useState(post.comments);
+  const [commentOption, setCommentOption] = useState<null | number>(null);
+
   const [
     addComment,
     {
@@ -133,6 +135,12 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
       return;
     }
   }
+  function hideCommentOption() {
+    console.log('click');
+    if (commentOption !== null) {
+      setCommentOption(null);
+    }
+  }
   async function handleDeleteComment(
     commentId: number,
     commentOwnerId: number
@@ -162,7 +170,7 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
     }
   }, [addCommentData, addCommentError]);
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} onClick={hideCommentOption}>
       <Layout>
         <div className={styles.container}>
           {updatePost.show && (
@@ -259,13 +267,13 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
                     </div>
                   </>
                 ) : (
-                  <div className={styles.deactivated}>
+                  <div className={styles['not-allow-comment']}>
                     로그인 후 댓글을 작성하실 수 있습니다.
                   </div>
                 )}
                 {addCommentIsLodding && (
                   <div className={styles.loading}>
-                    <LoadingSvg width={100} />
+                    <LoadingSvg width={100} speed='normal' />
                   </div>
                 )}
               </div>
@@ -277,6 +285,9 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
                         key={i}
                         comment={comment}
                         userId={user?.id}
+                        showOption={commentOption === i}
+                        handleShowOption={() => setCommentOption(i)}
+                        handleHideOption={() => setCommentOption(null)}
                         onUpdate={handleUpdateComment}
                         onDelete={handleDeleteComment}
                       />

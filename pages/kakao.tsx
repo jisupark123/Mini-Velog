@@ -1,7 +1,9 @@
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useCallback, useContext, useEffect } from 'react';
+import Layout from '../components/layouts/layout';
 import MainNav from '../components/layouts/main-nav';
+import LoadingSvg from '../components/svg/loading-svg';
 import useUser from '../lib/client/useUser';
 import UserCtx from '../store/user-context';
 import styles from './kakao.module.scss';
@@ -46,13 +48,15 @@ const Kakao: NextPage = () => {
   }, [loginHandler, authCode, kakaoServerError, router]);
 
   return (
-    <div className={styles.container}>
-      <MainNav onlyLogo={true} />
-      <main className={styles.main}>
-        <div className={styles['msg-box']}>
-          <h2>로그인 중입니다..</h2>
+    <div className={styles.wrapper}>
+      <Layout onlyLogo={true}>
+        <div className={styles.container}>
+          <div className={styles['msg-box']}>
+            <h2>로그인 중입니다...</h2>
+          </div>
+          <LoadingSvg width={80} speed='fast' />
         </div>
-      </main>
+      </Layout>
     </div>
   );
 };

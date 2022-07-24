@@ -18,14 +18,52 @@
   font-size: 2rem;
 }
 .btns {
+  position: relative;
   display: flex;
   align-items: center;
-  button {
-    margin-right: 1rem;
-    font-size: 2rem;
-  }
 }
 .post-upload-btn {
-  // margin-right: 1rem;
-  // font-size: 2rem;
+  margin-right: 1rem;
+  font-size: 2.5rem;
+}
+
+.user-btn {
+  font-size: 2.5rem;
+}
+
+.login-btn {
+  @include btn;
+  font-size: 1.8rem;
+  border: 1px solid $blue;
+  border-radius: 3rem;
+  color: $blue;
+  &:hover {
+    background-color: $blue;
+    color: $white;
+  }
+}
+
+.options {
+  ul {
+    @include card-setting;
+    position: absolute;
+    top: 100%;
+    right: 0px;
+    width: 16rem;
+    padding: 0.5rem 0 0.5rem 0;
+    overflow: auto;
+    li {
+      a {
+        display: block;
+        padding: 0.8rem 1.6rem 0.8rem 1.6rem;
+        font-size: 1.5rem;
+        color: $grayDark;
+        width: 100%;
+        cursor: pointer;
+        &:hover {
+          background-color: $bg--gray;
+        }
+      }
+    }
+  }
 }

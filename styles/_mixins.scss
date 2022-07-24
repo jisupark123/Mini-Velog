@@ -73,9 +73,9 @@
   padding: 0.8rem 1.2rem;
   font-size: 1.5rem;
   &:hover {
-    transition: background-color 0.15s ease-in-out;
+    transition: all 0.15s ease-in-out;
   }
   &:not(:hover) {
-    transition: background-color 0.15s ease-in-out;
+    transition: all 0.15s ease-in-out;
   }
 }

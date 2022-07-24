@@ -2,14 +2,15 @@ import React from 'react';
 
 interface Props {
   width: number;
+  speed: 'fast' | 'normal' | 'slow';
 }
-const LoadingSvg: React.FC<Props> = ({ width }) => {
+const LoadingSvg: React.FC<Props> = ({ width, speed }) => {
+  const rotationSpeed = speed === 'fast' ? 0.5 : speed === 'normal' ? 0.7 : 0.9;
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'
       xmlnsXlink='http://www.w3.org/1999/xlink'
       style={{
-        margin: 'auto',
         background: 'inherit',
         display: 'block',
         shapeRendering: 'auto',
@@ -32,7 +33,8 @@ const LoadingSvg: React.FC<Props> = ({ width }) => {
           attributeName='transform'
           type='rotate'
           repeatCount='indefinite'
-          dur='0.9900990099009901s'
+          dur={`${rotationSpeed}s`}
+          // dur='0.9900990099009901s'
           values='0 50 50;360 50 50'
           keyTimes='0;1'
         ></animateTransform>

@@ -137,6 +137,10 @@
   }
 }
 
+.loading {
+  @include flex-center;
+}
+
 .not-allow-comment {
   @include flex-center;
   font-size: 2rem;

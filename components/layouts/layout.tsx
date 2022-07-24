@@ -7,13 +7,15 @@ interface LayoutProps {
   hasNav?: boolean;
   hasTapBar?: boolean;
   seoTitle?: string;
+  onlyLogo?: boolean;
+
   children: React.ReactNode;
 }
 
-function Layout({ title, hasNav, seoTitle, children }: LayoutProps) {
+function Layout({ title, hasNav, seoTitle, children, onlyLogo }: LayoutProps) {
   return (
     <React.Fragment>
-      <MainNav />
+      <MainNav onlyLogo={onlyLogo} />
       {children}
     </React.Fragment>
   );

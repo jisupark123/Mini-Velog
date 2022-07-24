@@ -12,6 +12,9 @@ interface CommentWithUser extends Comment {
 interface CommentBoxProps {
   comment: CommentWithUser;
   userId: number | undefined;
+  showOption: boolean;
+  handleShowOption: () => void;
+  handleHideOption: () => void;
   onUpdate: (
     commentId: number,
     commentOwnerId: number,
@@ -23,19 +26,22 @@ interface CommentBoxProps {
 const CommentBox: React.FC<CommentBoxProps> = ({
   comment,
   userId,
+  showOption,
+  handleShowOption,
+  handleHideOption,
   onUpdate,
   onDelete,
 }) => {
-  const [showOptions, setShowOptions] = useState(false);
   const [commentUpdating, setCommentUpdating] = useState(false);
   const { failed } = useNotice();
   const updatingCommentRef = useRef<HTMLTextAreaElement>(null);
 
   function toggleShowOptions() {
-    setShowOptions((prev) => !prev);
+    if (showOption) handleHideOption();
+    else handleShowOption();
   }
   function handleUpdateBtnClick() {
-    setShowOptions(false);
+    handleHideOption();
     setCommentUpdating(true);
   }
   function handleUpdateComment() {
@@ -44,12 +50,12 @@ const CommentBox: React.FC<CommentBoxProps> = ({
       failed('댓글을 작성하는데 실패했습니다.');
       return;
     }
-    setShowOptions(false);
+    handleHideOption();
     setCommentUpdating(false);
     onUpdate(comment.id, comment.userId, newComment);
   }
   function handleDeleteComment() {
-    setShowOptions(false);
+    handleHideOption();
     onDelete(comment.id, comment.userId);
   }
 
@@ -91,7 +97,7 @@ const CommentBox: React.FC<CommentBoxProps> = ({
                     ></path>
                   </svg>
                 </button>
-                {showOptions && (
+                {showOption && (
                   <ul className={styles.options}>
                     <li>
                       <button

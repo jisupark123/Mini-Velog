@@ -1,16 +1,11 @@
-.container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background-color: $bg--main-page;
-}
-.main {
+.wrapper {
   @include page-config;
-  display: flex;
-  justify-content: center;
-  padding-top: 10rem;
-  padding-bottom: 20rem;
+  background-color: $bg--gray;
+}
+.container {
+  height: $main-height;
+  @include flex-center;
+  flex-direction: column;
 }
 .msg-box {
   @include flex-center;
