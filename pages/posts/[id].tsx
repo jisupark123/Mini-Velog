@@ -170,8 +170,8 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
     }
   }, [addCommentData, addCommentError]);
   return (
-    <div className={styles.wrapper} onClick={hideCommentOption}>
-      <Layout>
+    <Layout>
+      <div className={styles.wrapper} onClick={hideCommentOption}>
         <div className={styles.container}>
           {updatePost.show && (
             <MakePost
@@ -305,8 +305,8 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
             </div>
           )}
         </div>
-      </Layout>
-    </div>
+      </div>
+    </Layout>
   );
 };
 

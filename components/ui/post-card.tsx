@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { getDateDiff } from '../../lib/client/utils';
 import styles from './post-card.module.scss';
@@ -10,6 +11,8 @@ interface PostCardProps {
   createdAt: Date;
   likes: number;
   commentCount: number;
+  userId: number;
+  profileImage: string;
 }
 const PostCard: React.FC<PostCardProps> = (props) => {
   const timeDiff = getDateDiff(new Date(), new Date(props.createdAt));
@@ -38,8 +41,21 @@ const PostCard: React.FC<PostCardProps> = (props) => {
         </div>
       </div>
       <div className={styles.footer}>
-        <Link href={'#'}>
+        <Link href={`users/${props.userId}`}>
           <a className={styles['user-info']}>
+            <div className={styles.icon}>
+              <Image
+                src={
+                  props.profileImage?.length
+                    ? props.profileImage
+                    : '/default-avatar.jpeg'
+                }
+                alt='user-icon'
+                layout='fill'
+                objectFit='cover'
+              ></Image>
+            </div>
+            <span>by</span>
             <span>{props.name}</span>
           </a>
         </Link>

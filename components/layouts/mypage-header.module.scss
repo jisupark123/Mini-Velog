@@ -1,0 +1,75 @@
+.page-header {
+  background-color: $white;
+  padding-top: 3rem;
+  .container {
+    display: grid;
+    grid-template-areas: 'icon name actions' 'icon info actions' 'nav nav nav';
+    grid-template-columns: auto 1fr auto;
+    grid-template-rows: auto 1fr;
+    margin: 0 auto;
+    max-width: 980px;
+    width: 100%;
+    vertical-align: baseline;
+    .icon {
+      position: relative;
+      grid-area: icon;
+      width: 10rem;
+      height: 10rem;
+      margin-right: 1.5rem;
+      img {
+        border-radius: 9999px;
+      }
+    }
+    .name {
+      grid-area: name;
+      margin-top: 2rem;
+      margin-bottom: 1.5rem;
+      font-size: 2.5rem;
+      color: $blue;
+      font-weight: 900;
+    }
+    .info {
+      grid-area: info;
+      font-size: 1.5rem;
+      .user-introduction {
+        margin-bottom: 1rem;
+      }
+    }
+    .actions {
+      grid-area: actions;
+      .wrapper {
+        @include flex-center;
+        color: $gray;
+        svg {
+          margin-right: 0.3rem;
+          font-size: 2rem;
+        }
+        span {
+          font-size: 1.8rem;
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+    .nav {
+      grid-area: nav;
+      display: flex;
+      justify-content: center;
+      margin-top: 10rem;
+      margin-bottom: 1rem;
+      .nav-item {
+        font-size: 2.3rem;
+        color: $gray;
+        font-weight: 600;
+        margin: 0 2rem;
+        &:hover {
+          color: $blue;
+        }
+      }
+      .tab-focus {
+        color: $blue;
+      }
+    }
+  }
+}

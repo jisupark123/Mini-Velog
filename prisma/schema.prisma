@@ -21,9 +21,10 @@ model User {
   id           Int        @id @default(autoincrement())
   name         String
   createdAt    DateTime   @default(now())
+  profileImage String     @default("")
+  introduction String     @default("반갑습니다")
   kakaoId      BigInt     @unique
   loggedFrom   LoggedFrom
-  profileImage String?
   session      Session?
   posts        Post[]
   comments     Comment[]

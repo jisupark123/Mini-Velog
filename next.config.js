@@ -18,6 +18,15 @@ const nextConfig = {
   // env: {
   //   BASE_URL: process.env.BASE_URL,
   // },
+  async redirects() {
+    return [
+      {
+        source: '/users/:id',
+        destination: '/users/:id/dashboard',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

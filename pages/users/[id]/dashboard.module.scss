@@ -1,0 +1,37 @@
+.page-content {
+  background-color: $bg--gray;
+  .container {
+    max-width: 1080px;
+    width: 100%;
+    margin: 0 auto;
+  }
+}
+
+.section-box {
+  @include card-setting;
+  display: flex;
+  margin-top: 6rem;
+  padding: 1.5rem 1.7rem;
+  .split {
+    width: 33%;
+    h4 {
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 6rem;
+    }
+    div {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+    }
+    .user-rank {
+      color: $green;
+    }
+    .user-posts {
+      color: $blue;
+    }
+    .user-comments {
+      color: $indigo;
+    }
+  }
+}

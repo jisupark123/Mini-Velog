@@ -25,8 +25,13 @@ function Layout({ title, hasNav, seoTitle, children, onlyLogo }: LayoutProps) {
   return (
     <React.Fragment>
       <div className={styles.wrapper} onClick={handleCloseUserOptions}>
-        <MainNav onlyLogo={onlyLogo} />
-        <div className={styles['main-wrapper']}>{children}</div>
+        <header>
+          <MainNav onlyLogo={onlyLogo} />
+        </header>
+        <main className={styles.main}>
+          <section>{children}</section>
+          <footer></footer>
+        </main>
       </div>
     </React.Fragment>
   );

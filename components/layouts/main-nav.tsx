@@ -28,7 +28,7 @@ const MainNav: React.FC<MainNavProps> = ({ onlyLogo = false }) => {
     useRecoilState(showUserOptionsAtom);
 
   const optionList: OptionList[] = [
-    { name: 'My', link: `/users/${user?.id}` },
+    { name: '내 포스트', link: `/users/${user?.id}` },
     { name: '설정', link: `/setting` },
     { name: '로그아웃', link: '/api/users/logout' },
   ];

@@ -1,4 +1,5 @@
 .main {
-  // width: $desktop-nav-width;
-  // margin: 0 auto;
+  min-height: $main-height;
+  margin-top: $nav-height;
+  background-color: $bg--gray;
 }

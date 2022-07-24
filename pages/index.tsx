@@ -17,8 +17,8 @@ interface Post {
 
 const Home: NextPage<{ posts: Post[] }> = ({ posts }) => {
   return (
-    <div className={styles.wrapper}>
-      <Layout>
+    <Layout>
+      <div className={styles.wrapper}>
         <div className={styles.container}>
           <main className={styles.main}>
             <div className={styles.posts}>
@@ -26,19 +26,21 @@ const Home: NextPage<{ posts: Post[] }> = ({ posts }) => {
                 <PostCard
                   key={index}
                   id={post.id}
+                  userId={post.user.id}
                   title={post.title}
                   subTitle={post.subTitle}
                   name={post.user.name}
                   createdAt={post.createdAt}
                   likes={post.likes}
                   commentCount={post.comments.length}
+                  profileImage={post.user.profileImage}
                 />
               ))}
             </div>
           </main>
         </div>
-      </Layout>
-    </div>
+      </div>
+    </Layout>
   );
 };
 
@@ -48,7 +50,7 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
   try {
     const posts = await client.post.findMany({
       select: {
-        user: { select: { name: true, profileImage: true } },
+        user: { select: { id: true, name: true, profileImage: true } },
         id: true,
         createdAt: true,
         title: true,

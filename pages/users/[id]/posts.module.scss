@@ -1,0 +1,53 @@
+.page-content {
+  padding-bottom: 10rem;
+}
+
+.container {
+  max-width: 780px;
+  width: 100%;
+  margin: 0 auto;
+  padding-top: 5rem;
+}
+
+.post-card {
+  @include card-setting;
+  margin-bottom: 5rem;
+  padding: $card-padding;
+  .title {
+    margin-bottom: 2rem;
+    font-size: 2.5rem;
+    font-weight: 600;
+  }
+  .subTitle {
+    margin-bottom: 5rem;
+    font-size: 1.5rem;
+    color: $grayDark;
+  }
+  .wrapper {
+    @include flex-between;
+  }
+  .tags {
+    display: flex;
+    align-items: center;
+    .tag {
+      margin: 0.3rem;
+      font-size: 1.3rem;
+      color: $blue;
+      cursor: pointer;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+  .sub-info {
+    font-size: 1.2rem;
+    color: $gray;
+    span {
+      margin: 0.1rem;
+    }
+  }
+}
+// .wrapper {
+//   background-color: $bg--gray;
+//   padding-bottom: 100px;
+// }
