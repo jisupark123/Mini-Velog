@@ -19,7 +19,7 @@ declare global {
 function App({ Component, pageProps }: AppProps) {
   function kakaoInit() {
     window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_JS_KEY);
-    console.log(window.Kakao.isInitialized());
+    // console.log(window.Kakao.isInitialized());
   }
 
   return (

@@ -32,7 +32,7 @@ export interface IPost {
   subTitle: string;
   tags: string[];
   contents: string;
-  images: string[];
+  images?: string[];
   showLikes: boolean;
   allowComments: boolean;
 }
@@ -130,12 +130,13 @@ const MakePost: React.FC<Props> = ({ closeNewPost, update, prevPost }) => {
 
   function postUploadHandler(data: IForm) {
     if (!validateForm(data)) return false;
+    const formData = new FormData(); // 이미지 파일을 담을 인터페이스
+    formData.append('file', image[0]);
     const newPost: IPost = {
       title: data.title,
       subTitle: data.subTitle,
       tags: getTags(data.tags),
       contents: data.contents,
-      images: [imagePreview],
       showLikes,
       allowComments,
     };

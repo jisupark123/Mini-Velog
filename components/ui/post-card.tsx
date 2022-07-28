@@ -12,7 +12,7 @@ interface PostCardProps {
   likes: number;
   commentCount: number;
   userId: number;
-  profileImage: string;
+  avatar?: string | null;
 }
 const PostCard: React.FC<PostCardProps> = (props) => {
   const timeDiff = getDateDiff(new Date(), new Date(props.createdAt));
@@ -45,11 +45,7 @@ const PostCard: React.FC<PostCardProps> = (props) => {
           <a className={styles['user-info']}>
             <div className={styles.icon}>
               <Image
-                src={
-                  props.profileImage?.length
-                    ? props.profileImage
-                    : '/default-avatar.jpeg'
-                }
+                src={props.avatar || '/default-avatar.jpeg'}
                 alt='user-icon'
                 layout='fill'
                 objectFit='cover'

@@ -65,7 +65,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'GET') {
     const posts = await client.post.findMany({
       select: {
-        user: { select: { name: true, profileImage: true } },
+        user: { select: { name: true, avatar: true } },
         id: true,
         createdAt: true,
         title: true,

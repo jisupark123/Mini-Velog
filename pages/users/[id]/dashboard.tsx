@@ -71,7 +71,7 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
       name: true,
       createdAt: true,
       loggedFrom: true,
-      profileImage: true,
+      avatar: true,
       introduction: true,
     },
   });

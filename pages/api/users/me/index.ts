@@ -1,8 +1,14 @@
+import { User } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getUserIdFromSession } from '../../../../lib/secret/createSession';
 import client from '../../../../lib/server/client';
 import withHandler, { ResponseType } from '../../../../lib/server/withHandler';
 import { withApiSession } from '../../../../lib/server/withSession';
+
+export interface UserResponse {
+  ok: boolean;
+  profile: User;
+}
 async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseType>
@@ -19,6 +25,27 @@ async function handler(
       profile: { ...profile, kakaoId: String(profile?.kakaoId) },
     });
   }
+  if (req.method === 'POST') {
+    const {
+      session: { user },
+      body: { avatarId, introduction, nickname },
+    } = req;
+    const userId = getUserIdFromSession(user!.id);
+    if (avatarId) {
+      await client.user.update({
+        where: { id: userId },
+        data: { avatar: avatarId, introduction, nickname },
+      });
+    } else {
+      await client.user.update({
+        where: { id: userId },
+        data: { introduction, nickname },
+      });
+    }
+    return res.json({ ok: true });
+  }
 }
 
-export default withApiSession(withHandler({ methods: ['GET'], handler }));
+export default withApiSession(
+  withHandler({ methods: ['GET', 'POST'], privateMethods: ['POST'], handler })
+);

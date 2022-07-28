@@ -2,10 +2,12 @@ import React from 'react';
 
 interface Props {
   width: number;
-  speed: 'fast' | 'normal' | 'slow';
+  speed?: 'fast' | 'normal' | 'slow'; // defalut 'normal'
+  thickness?: 'thick' | 'normal' | 'slim'; // defalut 'normal'
 }
-const LoadingSvg: React.FC<Props> = ({ width, speed }) => {
-  const rotationSpeed = speed === 'fast' ? 0.5 : speed === 'normal' ? 0.7 : 0.9;
+const LoadingSvg: React.FC<Props> = ({ width, speed, thickness }) => {
+  const rotationSpeed = speed === 'fast' ? 0.5 : speed === 'slow' ? 0.9 : 0.7;
+  const svgThickness = thickness === 'thick' ? 4 : thickness === 'slim' ? 2 : 3;
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'

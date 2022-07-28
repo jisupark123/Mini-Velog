@@ -17,7 +17,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       where: { id: +postId },
       include: {
         user: {
-          select: { id: true, name: true, profileImage: true, posts: true },
+          select: { id: true, name: true, avatar: true, posts: true },
         },
         tags: true,
         images: true,

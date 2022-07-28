@@ -34,7 +34,7 @@ async function handler(
       comment,
     },
     include: {
-      user: { select: { id: true, name: true, profileImage: true } },
+      user: { select: { id: true, name: true, avatar: true } },
     },
   });
   return res.json({ ok: true, newComment });

@@ -323,13 +323,13 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     where: { id: Number(ctx.params!.id) },
     include: {
       user: {
-        select: { id: true, name: true, profileImage: true, posts: true },
+        select: { id: true, name: true, avatar: true, posts: true },
       },
       tags: true,
       images: true,
       comments: {
         include: {
-          user: { select: { id: true, name: true, profileImage: true } },
+          user: { select: { id: true, name: true, avatar: true } },
         },
         orderBy: { createdAt: 'desc' },
       },

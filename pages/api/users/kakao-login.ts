@@ -20,8 +20,6 @@ interface UserInfo {
   connected_at: string;
   properties: {
     nickname: string;
-    profile_image?: string; // 640x640
-    thumbnail_image?: string; // 110x110
   };
 }
 async function getTokenFromKakao(authCode: string) {
@@ -77,16 +75,12 @@ async function createOrUpdateSession(userId: number, newSessionId: string) {
 //   console.log(`try2: ${user}`);
 //   return user;
 // }
-async function createUser({
-  id: kakaoId,
-  properties: { nickname, profile_image, thumbnail_image },
-}: UserInfo) {
+async function createUser({ id: kakaoId, properties: { nickname } }: UserInfo) {
   const user = await client.user.create({
     data: {
       name: nickname,
       kakaoId,
       loggedFrom: 'Kakao',
-      profileImage: profile_image || null,
     },
   });
   const newSessionId = createSession(user.id);
@@ -108,7 +102,7 @@ const handler = async (
   const userInfo = await getUserFromKakao(tokenResponse);
   const {
     id: kakaoId,
-    properties: { nickname, profile_image, thumbnail_image },
+    properties: { nickname },
   } = userInfo;
   const user = await getUser(kakaoId);
   let newSessionId;

@@ -33,7 +33,7 @@ const Home: NextPage<{ posts: Post[] }> = ({ posts }) => {
                   createdAt={post.createdAt}
                   likes={post.likes}
                   commentCount={post.comments.length}
-                  profileImage={post.user.profileImage}
+                  avatar={post.user.avatar}
                 />
               ))}
             </div>
@@ -50,7 +50,7 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
   try {
     const posts = await client.post.findMany({
       select: {
-        user: { select: { id: true, name: true, profileImage: true } },
+        user: { select: { id: true, name: true, avatar: true } },
         id: true,
         createdAt: true,
         title: true,

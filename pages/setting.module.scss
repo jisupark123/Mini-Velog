@@ -1,0 +1,135 @@
+@mixin underline-input {
+  all: unset;
+  display: block;
+  width: 100%;
+  padding: 0 0.5rem 0.5rem 0.5rem;
+  border-bottom: 1px solid rgba($color: #000000, $alpha: 0.3);
+}
+
+.container {
+  max-width: 780px;
+  width: 100%;
+  margin: 0 auto;
+  padding-top: 10rem;
+}
+
+.form {
+  @include card-setting;
+  display: block;
+  padding: 3rem;
+  .title {
+    margin-bottom: 5rem;
+    font-size: 2.5rem;
+    font-weight: 600;
+    text-align: center;
+  }
+}
+
+.section-row {
+  display: flex;
+  margin-bottom: 5rem;
+  font-size: 1.5rem;
+
+  h1 {
+    max-width: 15rem;
+    width: 100%;
+    white-space: nowrap;
+    // margin-right: 10rem;
+    font-weight: 900;
+  }
+}
+
+.image-settings {
+  display: flex;
+  .user-icon {
+    position: relative;
+    @include flex-center;
+    overflow: hidden;
+    width: 13rem;
+    height: 13rem;
+    margin-right: 3rem;
+    border-radius: 9999px;
+    img {
+    }
+  }
+  .btns {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    label,
+    button {
+      @include btn;
+      cursor: pointer;
+      border-radius: 0.5rem;
+    }
+    label {
+      margin-bottom: 1rem;
+      background-color: $blue;
+      color: $white;
+
+      &:hover {
+        background-color: $btn--blue-hover;
+      }
+    }
+    button {
+      color: $white;
+      background-color: $btn--gray;
+      &:hover {
+        background-color: $btn--gray-hover;
+      }
+    }
+  }
+}
+
+.intro-setting {
+  width: 100%;
+  input {
+    @include underline-input;
+  }
+  span {
+    display: block;
+    height: 5rem;
+    padding-top: 0.3rem;
+    font-size: 0.7rem;
+    color: $danger;
+  }
+}
+
+.nickname-setting {
+  width: 100%;
+  input {
+    @include underline-input;
+  }
+  .valid-check {
+    // max-height: 10rem;
+    height: 5rem;
+    padding-top: 0.3rem;
+    span {
+      font-size: 0.7rem;
+    }
+    .valid {
+      color: $success;
+    }
+    .not-valid {
+      color: $danger;
+    }
+  }
+}
+
+.submit {
+  display: flex;
+  justify-content: flex-end;
+  button {
+    @include btn;
+    background-color: $blue;
+    color: $white;
+    border-radius: 0.5rem;
+    &:hover {
+      background-color: $btn--blue-hover;
+    }
+  }
+}
+
+.hidden {
+  display: none;
+}
