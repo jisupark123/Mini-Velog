@@ -1,17 +1,23 @@
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { FormEvent, useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import useMutation from '../../lib/client/useMutation';
-import { getTags } from '../../lib/client/utils';
+import { getImageUrl, getTags } from '../../lib/client/utils';
 import DisplayLength from '../ui/\bdisplay-length';
 import InputHelper from '../notification/input-helper';
 import Overlay from '../ui/overlay';
-import SettingLayout from '../layouts/setting-layout';
 import BasicModal from './basic-modal';
 import styles from './make-post.module.scss';
 import { useNotice } from '../../store/notice-context';
 import { useConfirm } from '../../store/confirm-context';
+import useUser from '../../lib/client/useUser';
+import { ImageResponse } from '../../pages/api/image';
+import { AiOutlineDelete } from 'react-icons/ai';
+import { TbExchange } from 'react-icons/tb';
+import Switch from '../btn/switch';
+import { PostUploadResponse, UploadPost } from '../../pages/api/posts';
+import { postImage } from '@prisma/client';
 
 interface Props {
   update: boolean;
@@ -32,7 +38,7 @@ export interface IPost {
   subTitle: string;
   tags: string[];
   contents: string;
-  images?: string[];
+  images?: postImage[];
   showLikes: boolean;
   allowComments: boolean;
 }
@@ -45,9 +51,12 @@ const titleLimit = 30;
 const subTitleLimit = 150;
 const contentsLimit = 10000;
 const tagLimit = 10;
+let images: string[] = [];
+let imageDeleted = false;
 
 const MakePost: React.FC<Props> = ({ closeNewPost, update, prevPost }) => {
   const router = useRouter();
+  const { user } = useUser();
   const { showConfirm } = useConfirm();
   const [page, setPage] = useState(1); // 현재 페이지
   const [showTagInputHelper, setShowTagInputHelper] = useState(false);
@@ -55,24 +64,30 @@ const MakePost: React.FC<Props> = ({ closeNewPost, update, prevPost }) => {
   const [imagePreview, setImagePreview] = useState('');
   const [showLikes, setShowLikes] = useState(true); // 좋아요, 조회수 숨기기
   const [allowComments, setAllowComments] = useState(true); // 댓글 허용
-  const { successed, failed } = useNotice();
+  const { successed, failed, loading } = useNotice();
   // const imgInputRef = useRef<HTMLInputElement>(null);
-  const { register, watch, handleSubmit, formState, setFocus, setValue } =
-    useForm<IForm>();
+  const {
+    register,
+    watch,
+    handleSubmit,
+    formState,
+    setFocus,
+    setValue,
+    resetField,
+  } = useForm<IForm>();
 
   const { title, subTitle, contents, tags, image } = watch();
 
-  const [uploadPost, { loading, data: uploadResponse, error }] =
-    useMutation<MutationResult>({
+  const [uploadPost, { loading: uploadLoading, data: uploadResponse, error }] =
+    useMutation<PostUploadResponse>({
       method: 'POST',
       url: update ? `/api/posts/${router.query.id}` : '/api/posts',
     });
 
   useEffect(() => {
     console.log('image change');
-    if (image && image.length > 0) {
-      const file = image[0];
-      setImagePreview(URL.createObjectURL(file));
+    if (image?.length) {
+      setImagePreview(URL.createObjectURL(image[0]));
     }
   }, [image]);
 
@@ -80,12 +95,22 @@ const MakePost: React.FC<Props> = ({ closeNewPost, update, prevPost }) => {
     if (uploadResponse?.ok) {
       successed('성공적으로 업로드되었습니다.');
       closeNewPost();
-      router.push('/');
+      // router.push('/');
+      // router.push(`/users/${user!.id}/posts`);
+      router.push(`/posts/${uploadResponse.postId}`);
     }
-  }, [uploadResponse, closeNewPost, router, successed]);
+    if (!uploadResponse?.ok && error) {
+      failed(error.toString());
+    }
+  }, [uploadResponse, closeNewPost, router, user, error]);
 
   const postInit = useCallback(
     function (post: IPost) {
+      if (post.images?.length) {
+        setImagePreview(getImageUrl(post.images[0].imageId, 'postImage'));
+        images = [post.images[0].imageId];
+        console.log('images:', images);
+      }
       const tags = post.tags.join(',');
       setValue('title', post.title);
       setValue('tags', tags);
@@ -93,6 +118,7 @@ const MakePost: React.FC<Props> = ({ closeNewPost, update, prevPost }) => {
       setValue('subTitle', post.subTitle);
       setShowLikes(post.showLikes);
       setAllowComments(post.allowComments);
+
       // setValue('image', post.images); 나중에 이미지도 넣어줘야 함
     },
     [setValue]
@@ -128,15 +154,36 @@ const MakePost: React.FC<Props> = ({ closeNewPost, update, prevPost }) => {
     return true;
   }
 
-  function postUploadHandler(data: IForm) {
-    if (!validateForm(data)) return false;
-    const formData = new FormData(); // 이미지 파일을 담을 인터페이스
-    formData.append('file', image[0]);
-    const newPost: IPost = {
+  async function postUploadHandler(data: IForm) {
+    if (!user) {
+      failed('로그인 후에 이용바랍니다.');
+      return;
+    }
+    if (!validateForm(data)) return;
+
+    loading('업로드 중입니다..');
+    if (image?.length) {
+      console.log('이미지 있음');
+      const { uploadURL }: ImageResponse = await fetch('/api/image').then(
+        (res) => res.json()
+      );
+      const form = new FormData(); // 이미지 파일을 담을 인터페이스
+      form.append('file', image[0], user.id + '');
+      const {
+        result: { id },
+      } = await fetch(uploadURL, {
+        method: 'POST',
+        body: form,
+      }).then((res) => res.json());
+      images = [id]; // 여러 이미지 업로드 할 땐 images.push(id)로 바꿔야 함
+    }
+
+    const newPost: UploadPost = {
       title: data.title,
       subTitle: data.subTitle,
       tags: getTags(data.tags),
       contents: data.contents,
+      images,
       showLikes,
       allowComments,
     };
@@ -184,11 +231,18 @@ const MakePost: React.FC<Props> = ({ closeNewPost, update, prevPost }) => {
     setTagPreview(tags.map((tag) => `#${tag}`).join(' '));
   }
 
-  function handleSetPage2() {
+  function handleSetPage3() {
     if (!subTitle?.length) {
       setValue('subTitle', contents?.slice(0, subTitleLimit));
     }
-    setPage(2);
+    setPage(3);
+  }
+
+  function deleteImage(event: FormEvent<HTMLButtonElement>) {
+    event.preventDefault();
+    resetField('image');
+    setImagePreview('');
+    imageDeleted = true;
   }
 
   return (
@@ -201,9 +255,68 @@ const MakePost: React.FC<Props> = ({ closeNewPost, update, prevPost }) => {
         {page === 1 && (
           <BasicModal
             header={update ? '게시물 수정하기' : '새 게시물 만들기'}
-            rightBtn={{ title: '다음', onClickHandler: handleSetPage2 }}
+            rightBtn={{ title: '다음', onClickHandler: () => setPage(2) }}
           >
             <div className={styles.container1}>
+              {imagePreview ? (
+                <div className={styles['image-preview']}>
+                  <Image
+                    src={imagePreview}
+                    // width={1080}
+                    // height={500}
+                    layout='fill'
+                    alt='이미지 미리보기'
+                    objectFit='cover'
+                    priority={true}
+                  />
+                  <div className={styles.btns}>
+                    <button onClick={deleteImage}>
+                      <AiOutlineDelete />
+                    </button>
+                    <label htmlFor='image'>
+                      <TbExchange />
+                    </label>
+                  </div>
+                  <input
+                    {...register('image')}
+                    // ref={imgInputRef}
+                    type='file'
+                    accept='image/*'
+                    id='image'
+                    className={styles.hidden}
+                  />
+                </div>
+              ) : (
+                <div className={styles['image-inputs']}>
+                  <div className={styles['image-icon']}></div>
+                  <div className={styles['image-ment']}>
+                    <h2>사진을 추가하세요.</h2>
+                  </div>
+                  <div className={styles['image-input']}>
+                    <label htmlFor='image' className={styles['image-btn']}>
+                      컴퓨터에서 선택
+                    </label>
+                    <input
+                      {...register('image')}
+                      // ref={imgInputRef}
+                      type='file'
+                      accept='image/*'
+                      id='image'
+                      className={styles.hidden}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          </BasicModal>
+        )}
+        {page === 2 && (
+          <BasicModal
+            header={update ? '게시물 수정하기' : '새 게시물 만들기'}
+            backBtn={{ onClickHandler: () => setPage(1) }}
+            rightBtn={{ title: '다음', onClickHandler: handleSetPage3 }}
+          >
+            <div className={styles.container2}>
               <div className={styles.title}>
                 <textarea
                   {...register('title')}
@@ -254,9 +367,8 @@ const MakePost: React.FC<Props> = ({ closeNewPost, update, prevPost }) => {
             </div>
           </BasicModal>
         )}
-        {page === 2 && (
+        {page === 3 && (
           <BasicModal
-            wide={true}
             header={update ? '게시물 수정하기' : '새 게시물 만들기'}
             backBtn={{ onClickHandler: goToPreviousPage }}
             rightBtn={{
@@ -264,83 +376,49 @@ const MakePost: React.FC<Props> = ({ closeNewPost, update, prevPost }) => {
               onClickHandler: () => handleSubmit(postUploadHandler),
             }}
           >
-            <div className={styles.container2}>
-              <div className={styles.image}>
-                {imagePreview ? (
-                  <div className={styles['image-preview']}>
-                    <Image
-                      src={imagePreview}
-                      // width={1080}
-                      // height={500}
-                      layout='fill'
-                      alt='이미지 미리보기'
+            <div className={styles.container3}>
+              <div className={styles['sub-title']}>
+                <textarea
+                  {...register('subTitle')}
+                  placeholder='당신의 포스트를 짧게 소개해보세요.'
+                ></textarea>
+                <div className={styles['sub-title-bottom']}>
+                  <div className={styles['text-length']}>
+                    <DisplayLength
+                      limit={subTitleLimit}
+                      value={subTitle?.trim().length || 0}
                     />
-                    <label htmlFor='image' className={styles['image-change']}>
-                      변경
-                    </label>
-                    <input
-                      {...register('image')}
-                      // ref={imgInputRef}
-                      type='file'
-                      accept='image/*'
-                      id='image'
-                      className={styles.hidden}
-                    />
-                  </div>
-                ) : (
-                  <div className={styles['image-inputs']}>
-                    <div className={styles['image-icon']}></div>
-                    <div className={styles['image-ment']}>
-                      <h2>첨부할 사진을 여기에 끌어다 놓으세요</h2>
-                    </div>
-                    <div className={styles['image-input']}>
-                      <label htmlFor='image'>
-                        <div className={styles['image-btn']}>
-                          컴퓨터에서 선택
-                        </div>
-                      </label>
-                      <input
-                        {...register('image')}
-                        // ref={imgInputRef}
-                        type='file'
-                        accept='image/*'
-                        id='image'
-                        className={styles.hidden}
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-              <div className={styles.main}>
-                <div className={styles['sub-title']}>
-                  <textarea
-                    {...register('subTitle')}
-                    placeholder='당신의 포스트를 짧게 소개해보세요.'
-                  ></textarea>
-                  <div className={styles['sub-title-bottom']}>
-                    <div className={styles['text-length']}>
-                      <DisplayLength
-                        limit={subTitleLimit}
-                        value={subTitle?.trim().length || 0}
-                      />
-                    </div>
                   </div>
                 </div>
-                <div className={styles.settings}>
-                  <div className={styles.setting}>
-                    <SettingLayout
-                      title='이 게시물의 좋아요 수 및 조회수 숨기기'
-                      description='이 게시물의 총 좋아요 및 조회수를 다른 사람이 볼 수 없습니다. 나중에 설정에서 변경할 수 있습니다.'
-                      state={showLikes}
-                      handleClick={toggleShowLikes}
-                    />
+              </div>
+              <div className={styles.settings}>
+                <div className={styles.setting}>
+                  <div className={styles.ment}>
+                    <div className={styles.title}>
+                      이 게시물의 좋아요 수 및 조회수 숨기기
+                    </div>
+                    <div className={styles.description}>
+                      <p>
+                        이 게시물의 총 좋아요 및 조회수를 다른 사람이 볼 수
+                        없습니다. 나중에 설정에서 변경할 수 있습니다.
+                      </p>
+                    </div>
                   </div>
-                  <div className={styles.setting}>
-                    <SettingLayout
-                      title='댓글 기능 해제'
-                      description='나중에 설정에서 변경할 수 있습니다.'
-                      state={allowComments}
+                  <div className={styles.switch}>
+                    <Switch handleClick={toggleShowLikes} state={showLikes} />
+                  </div>
+                </div>
+                <div className={styles.setting}>
+                  <div className={styles.ment}>
+                    <div className={styles.title}>댓글 기능 해제</div>
+                    <div className={styles.description}>
+                      <p>나중에 설정에서 변경할 수 있습니다.</p>
+                    </div>
+                  </div>
+                  <div className={styles.switch}>
+                    <Switch
                       handleClick={toggleAllowComments}
+                      state={allowComments}
                     />
                   </div>
                 </div>

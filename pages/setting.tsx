@@ -7,8 +7,10 @@ import Layout from '../components/layouts/layout';
 import LoadingSvg from '../components/svg/loading-svg';
 import useMutation from '../lib/client/useMutation';
 import useUser from '../lib/client/useUser';
+import { defaultAvatar, getImageUrl } from '../lib/client/utils';
 import { ResponseType } from '../lib/server/withHandler';
 import { useNotice } from '../store/notice-context';
+import { ImageResponse } from './api/image';
 import styles from './setting.module.scss';
 
 interface SettingForm {
@@ -20,7 +22,7 @@ interface SettingForm {
 let avatarDeleted = false;
 
 const Setting: NextPage = () => {
-  const { user } = useUser();
+  const { user, mutate: refreshUser } = useUser();
   const { successed, failed } = useNotice();
   const {
     register,
@@ -28,6 +30,7 @@ const Setting: NextPage = () => {
     setValue,
     setError,
     handleSubmit,
+    resetField,
     formState: { errors: formError },
   } = useForm<SettingForm>();
   const [avatarPreview, setAvatarPreview] = useState('');
@@ -41,10 +44,11 @@ const Setting: NextPage = () => {
   const { avatar, nickname } = watch();
   const formInit = useCallback(
     function () {
-      // setValue('avatar', user!.profileImage);
-      //setAvatarPreview(user!.avatar)
       setValue('nickname', user!.nickname);
       setValue('introduction', user!.introduction);
+      if (user?.avatar) {
+        setAvatarPreview(getImageUrl(user!.avatar, 'avatar'));
+      }
     },
     [setValue, user]
   );
@@ -69,6 +73,7 @@ const Setting: NextPage = () => {
 
   function deleteAvatar(event: FormEvent<HTMLButtonElement>) {
     event.preventDefault();
+    resetField('avatar');
     setAvatarPreview('');
     avatarDeleted = true;
   }
@@ -87,20 +92,32 @@ const Setting: NextPage = () => {
       return;
     }
     if (!nicknameCheck(nickname)) return;
-    if (!avatarDeleted && avatar?.length > 0 && user) {
-      const { uploadUrl } = await fetch('/api/files').then((res) => res.json()); // 1. 업로드 url 받아오기
+
+    // 이미지가 있다면
+    if (avatar?.length && user) {
+      // 1. 업로드 url 받아오기
+      const { uploadURL }: ImageResponse = await fetch('/api/image').then(
+        (res) => res.json()
+      );
       const form = new FormData();
-      form.append('file', avatar[0], user?.id + '');
+      form.append('file', avatar[0], user.id + '');
+
+      // 2. 이미지 업로드하기
       const {
         result: { id: avatarId },
-      } = await fetch(uploadUrl, { method: 'POST', body: form }).then(
-        (
-          res // 2. 이미지 업로드하기
-        ) => res.json()
-      );
-      console.log('통과');
+      } = await fetch(uploadURL, {
+        method: 'POST',
+        body: form,
+      }).then((res) => res.json());
       editProfile({
         avatarId,
+        introduction,
+        nickname,
+      });
+      // 이미지가 삭제되었다면
+    } else if (avatarDeleted) {
+      editProfile({
+        avatarId: '',
         introduction,
         nickname,
       });
@@ -118,12 +135,12 @@ const Setting: NextPage = () => {
       return;
     }
     if (data?.ok) {
-      // successed('변경되었습니다.');
-      console.log('successed');
-      console.log(data);
+      successed('변경되었습니다.');
+      refreshUser();
+
       return;
     }
-  }, [data, failed, successed]);
+  }, [data, refreshUser]);
 
   useEffect(() => {
     if (user) {
@@ -131,8 +148,10 @@ const Setting: NextPage = () => {
     }
   }, [formInit, user]);
   useEffect(() => {
+    console.log('avatar change', avatar);
     if (avatar?.length) {
       setAvatarPreview(URL.createObjectURL(avatar[0]));
+      avatarDeleted = false;
     }
   }, [avatar, setValue]);
 
@@ -170,12 +189,12 @@ const Setting: NextPage = () => {
             <h1>프로필 사진</h1>
             <div className={styles['image-settings']}>
               <div className={styles['user-icon']}>
-                {/* <img src={avatarPreview || '/default-avatar.jpeg'} alt='' /> */}
                 <Image
-                  src={avatarPreview || '/default-avatar.jpeg'}
-                  // src={'/고양이.jpeg'}
+                  src={avatarPreview || defaultAvatar}
                   layout='fill'
                   alt=''
+                  priority={true}
+                  // objectFit='cover'
                 />
               </div>
               <input
