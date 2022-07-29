@@ -1,11 +1,12 @@
 .container {
   position: absolute;
-  padding: 12px;
-  width: 270px;
+  padding: 1.2rem;
+  width: 27rem;
   background-color: $black;
   color: $white;
   font-size: 1.2rem;
   line-height: 1.5;
+  word-break: break-all;
   // transition: all 0.125s ease-in 0s;
 }
 

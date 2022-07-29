@@ -1,24 +1,30 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getUserIdFromSession } from '../../../lib/secret/createSession';
 import client from '../../../lib/server/client';
-import withHandler from '../../../lib/server/withHandler';
+import withHandler, { ResponseType } from '../../../lib/server/withHandler';
 import { withApiSession } from '../../../lib/server/withSession';
 
+export interface UploadPost {
+  title: string;
+  subTitle: string;
+  tags: string[];
+  contents: string;
+  images: string[];
+  showLikes: boolean;
+  allowComments: boolean;
+}
+
 export interface PostRequestBody {
-  body: {
-    title: string;
-    subTitle: string;
-    tags: string[];
-    contents: string;
-    images: string[];
-    showLikes: boolean;
-    allowComments: boolean;
-  };
+  body: UploadPost;
   session: {
     user?: {
-      id: string;
+      id: number;
     };
   };
+}
+
+export interface PostUploadResponse extends ResponseType {
+  postId: number;
 }
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -52,15 +58,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           })),
         },
         images: {
-          create: images.map((url) => ({
-            url,
+          create: images.map((imageId) => ({
+            imageId,
           })),
         },
         showLikes,
         allowComments,
       },
     });
-    return res.json({ ok: true });
+    return res.json({ ok: true, postId: post.id });
   }
   if (req.method === 'GET') {
     const posts = await client.post.findMany({

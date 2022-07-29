@@ -6,7 +6,6 @@ import styles from './main-nav.module.scss';
 import ModeChangeBtn from '../btn/mode-change-btn';
 import MakePost from '../newPost/make-post';
 import { IoPersonOutline } from 'react-icons/io5';
-import { BsPlusSquare } from 'react-icons/bs';
 import { useRecoilState } from 'recoil';
 import { showUserOptionsAtom } from '../../store/atom';
 

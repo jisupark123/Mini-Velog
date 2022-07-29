@@ -29,11 +29,11 @@ const Home: NextPage<{ posts: Post[] }> = ({ posts }) => {
                   userId={post.user.id}
                   title={post.title}
                   subTitle={post.subTitle}
-                  name={post.user.name}
+                  nickname={post.user.nickname || post.user.name}
                   createdAt={post.createdAt}
                   likes={post.likes}
                   commentCount={post.comments.length}
-                  avatar={post.user.avatar}
+                  avatar={post.user.avatar || ''}
                 />
               ))}
             </div>
@@ -50,7 +50,9 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
   try {
     const posts = await client.post.findMany({
       select: {
-        user: { select: { id: true, name: true, avatar: true } },
+        user: {
+          select: { id: true, name: true, nickname: true, avatar: true },
+        },
         id: true,
         createdAt: true,
         title: true,
@@ -62,7 +64,6 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
         createdAt: 'desc',
       },
     });
-    console.log(posts);
     return {
       props: { posts: JSON.parse(JSON.stringify(posts)) },
     };

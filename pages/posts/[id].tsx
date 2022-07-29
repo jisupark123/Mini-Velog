@@ -1,4 +1,4 @@
-import { Comment, Image, Post, Tag, User } from '@prisma/client';
+import { Comment, Post, postImage, Tag, User } from '@prisma/client';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
@@ -15,6 +15,8 @@ import { useRouter } from 'next/router';
 import MakePost, { IPost } from '../../components/newPost/make-post';
 import { useNotice } from '../../store/notice-context';
 import { useConfirm } from '../../store/confirm-context';
+import { defaultAvatar, getImageUrl } from '../../lib/client/utils';
+import Image from 'next/image';
 
 interface CommentWithUser extends Comment {
   user: User;
@@ -24,7 +26,7 @@ interface WithPost extends Post {
   user: User;
   comments: CommentWithUser[];
   tags: Tag[];
-  images: Image[];
+  images: postImage[];
 }
 
 interface PostDetailProps {
@@ -43,7 +45,7 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
       title: post.title,
       tags: post.tags.map((tag) => tag.tag),
       contents: post.contents,
-      images: [''],
+      images: post.images,
       subTitle: post.subTitle,
       showLikes: post.showLikes,
       allowComments: post.allowComments,
@@ -88,6 +90,7 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
       method: 'DELETE',
     });
     if (response.ok) {
+      notice.successed('삭제되었습니다.');
       router.push('/');
     }
   }
@@ -180,32 +183,50 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
               closeNewPost={() => setUpdatePost(initialUpdatePost)}
             />
           )}
-          <div className={styles.header}>
-            <h1>{post.title}</h1>
-            <div className={styles.metadata}>
-              <div className={styles.info}>
-                <span className={styles.username}>{post.user.name}</span>
-                <span className={styles.separator}>&#183;</span>
-                <span className={styles.date}>{`${date.getFullYear()}년 ${
-                  date.getMonth() + 1
-                }월 ${date.getDate()}일`}</span>
-              </div>
-              {post.userId === user?.id && (
-                <div className={styles.manage}>
-                  <button onClick={handleUpdatePost}>수정</button>
-                  <button onClick={showDeleteConfirm}>삭제</button>
+          <div className={styles.post}>
+            <div className={styles.header}>
+              <h1>{post.title}</h1>
+              <div className={styles.metadata}>
+                <div className={styles.info}>
+                  <Link href={`/users/${post.userId}`}>
+                    <a className={styles['link-wrapper']}>
+                      <div className={styles.avatar}>
+                        <Image
+                          src={
+                            post.user.avatar
+                              ? getImageUrl(post.user.avatar, 'avatar')
+                              : defaultAvatar
+                          }
+                          alt='avatar'
+                          layout='fill'
+                        />
+                      </div>
+                      <span className={styles.nickname}>
+                        {post.user.nickname || post.user.name}
+                      </span>
+                    </a>
+                  </Link>
+                  <span className={styles.separator}>&#183;</span>
+                  <span className={styles.date}>{`${date.getFullYear()}년 ${
+                    date.getMonth() + 1
+                  }월 ${date.getDate()}일`}</span>
                 </div>
-              )}
+                {post.userId === user?.id && (
+                  <div className={styles.manage}>
+                    <button onClick={handleUpdatePost}>수정</button>
+                    <button onClick={showDeleteConfirm}>삭제</button>
+                  </div>
+                )}
+              </div>
+              <div className={styles.tags}>
+                {post.tags.map((tag, idx) => (
+                  <Link key={idx} href='#'>
+                    <a className={styles.tag}>{`#${tag.tag}`}</a>
+                  </Link>
+                ))}
+              </div>
             </div>
-            <div className={styles.tags}>
-              {post.tags.map((tag, idx) => (
-                <Link key={idx} href='#'>
-                  <a className={styles.tag}>{`#${tag.tag}`}</a>
-                </Link>
-              ))}
-            </div>
-          </div>
-          <div className={styles.fake}>
+            {/* <div className={styles.fake}>
             <div className={styles['remote-controll']}>
               <div className={styles.likes}>
                 <svg
@@ -243,10 +264,25 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
               </div>
               <div className={styles['comments-num']}>{comments.length}</div>
             </div>
-          </div>
-          <div className={styles.main}>
-            {/* <img/> */}
-            <div className={styles.contents}>{post.contents}</div>
+          </div> */}
+            <div className={styles.main}>
+              {/* <img/> */}
+              {post.images?.length ? (
+                <div className={styles['image-container']}>
+                  <div className={styles['image-wrapper']}>
+                    <Image
+                      src={getImageUrl(post.images[0].imageId, 'postImage')}
+                      alt=''
+                      layout='fill'
+                      objectFit='cover'
+                      priority={true}
+                    />
+                  </div>
+                </div>
+              ) : null}
+
+              <div className={styles.contents}>{post.contents}</div>
+            </div>
           </div>
           {post.allowComments ? (
             <div className={styles.comments}>
@@ -261,7 +297,6 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
                         spellCheck='false'
                       ></textarea>
                     </div>
-                    {/* <TextareaAutosize placeholder='댓글을 작성하세요' minRows={10} /> */}
                     <div className={styles['post-btn']}>
                       <button onClick={handleAddNewComment}>댓글 작성</button>
                     </div>
@@ -276,6 +311,11 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
                     <LoadingSvg width={100} speed='normal' />
                   </div>
                 )}
+              </div>
+              <div className={styles['division-line']}>
+                <div></div>
+                <span>{`${comments.length}개의 댓글`}</span>
+                <div></div>
               </div>
               {comments.length > 0 ? (
                 <div className={styles['other-comments']}>
@@ -295,7 +335,9 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
                 </div>
               ) : (
                 <div className={styles['no-comments']}>
-                  아직 댓글이 없습니다. 먼저 대화를 시도해보세요!
+                  {`아직 댓글이 없습니다. ${
+                    user ? '먼저 대화를 시도해보세요!' : ''
+                  }`}
                 </div>
               )}
             </div>
@@ -323,13 +365,22 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     where: { id: Number(ctx.params!.id) },
     include: {
       user: {
-        select: { id: true, name: true, avatar: true, posts: true },
+        select: {
+          id: true,
+          name: true,
+          nickname: true,
+          avatar: true,
+          posts: true,
+        },
       },
+
       tags: true,
       images: true,
       comments: {
         include: {
-          user: { select: { id: true, name: true, avatar: true } },
+          user: {
+            select: { id: true, name: true, avatar: true, nickname: true },
+          },
         },
         orderBy: { createdAt: 'desc' },
       },

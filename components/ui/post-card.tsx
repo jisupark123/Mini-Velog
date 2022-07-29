@@ -1,27 +1,31 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { getDateDiff } from '../../lib/client/utils';
+import {
+  defaultAvatar,
+  getDateDiff,
+  getImageUrl,
+} from '../../lib/client/utils';
 import styles from './post-card.module.scss';
 
 interface PostCardProps {
   id: number;
   title: string;
   subTitle: string;
-  name: string;
+  nickname: string;
   createdAt: Date;
   likes: number;
   commentCount: number;
   userId: number;
-  avatar?: string | null;
+  avatar: string;
 }
 const PostCard: React.FC<PostCardProps> = (props) => {
   const timeDiff = getDateDiff(new Date(), new Date(props.createdAt));
   const subTitleLength = props.subTitle.length;
   return (
     <div className={styles.container}>
-      <div className={styles.main}>
-        <Link href={`/posts/${props.id}`}>
-          <a className={styles.contents}>
+      <Link href={`/posts/${props.id}`}>
+        <a className={styles.main}>
+          <div className={styles.contents}>
             <h4>{props.title}</h4>
             <div className={styles['sub-title-wrapper']}>
               <p>
@@ -32,27 +36,32 @@ const PostCard: React.FC<PostCardProps> = (props) => {
                   : ''}
               </p>
             </div>
-          </a>
-        </Link>
-        <div className={styles['sub-info']}>
-          <span>{`${timeDiff} 전`}</span>
-          <span>&#183;</span>
-          <span>{`댓글 ${props.commentCount}개`}</span>
-        </div>
-      </div>
+          </div>
+          <div className={styles['sub-info']}>
+            <span>{`${timeDiff} 전`}</span>
+            <span>&#183;</span>
+            <span>{`댓글 ${props.commentCount}개`}</span>
+          </div>
+        </a>
+      </Link>
       <div className={styles.footer}>
-        <Link href={`users/${props.userId}`}>
+        <Link href={`/users/${props.userId}`}>
           <a className={styles['user-info']}>
             <div className={styles.icon}>
               <Image
-                src={props.avatar || '/default-avatar.jpeg'}
+                src={
+                  props.avatar
+                    ? getImageUrl(props.avatar, 'avatar')
+                    : defaultAvatar
+                }
                 alt='user-icon'
-                layout='fill'
                 objectFit='cover'
-              ></Image>
+                priority={false}
+                layout='fill'
+              />
             </div>
             <span>by</span>
-            <span>{props.name}</span>
+            <span>{props.nickname}</span>
           </a>
         </Link>
         {/* <div className={styles.likes}>

@@ -3,19 +3,21 @@ import React, { useState } from 'react';
 
 interface State {
   show: boolean;
-  isSuccessed: boolean;
+  state: boolean | 'loading';
   message: string;
   successed: (message: string) => void;
   failed: (message: string) => void;
+  loading: (message: string) => void;
   close: () => void;
 }
 
 const defaultState: State = {
   show: false,
-  isSuccessed: false,
+  state: false,
   message: '',
   successed: () => {},
   failed: () => {},
+  loading: () => {},
   close: () => {},
 };
 
@@ -28,7 +30,7 @@ const NoticeProvider: React.FC<{ children: React.ReactNode }> = ({
     setState((prev) => ({
       ...prev,
       show: true,
-      isSuccessed: true,
+      state: true,
       message,
     }));
   };
@@ -36,7 +38,15 @@ const NoticeProvider: React.FC<{ children: React.ReactNode }> = ({
     setState((prev) => ({
       ...prev,
       show: true,
-      isSuccessed: false,
+      state: false,
+      message,
+    }));
+  };
+  const loading = (message: string) => {
+    setState((prev) => ({
+      ...prev,
+      show: true,
+      state: 'loading',
       message,
     }));
   };
@@ -46,10 +56,11 @@ const NoticeProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const noticeCtx: State = {
     show: state.show,
-    isSuccessed: state.isSuccessed,
+    state: state.state,
     message: state.message,
     successed,
     failed,
+    loading,
     close,
   };
   return (

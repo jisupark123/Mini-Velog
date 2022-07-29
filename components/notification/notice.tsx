@@ -21,31 +21,32 @@ const variants: Variants = {
 };
 
 const Notice: React.FC = () => {
-  const { show, isSuccessed, message, close } = useNotice();
+  const { show, state, message, close } = useNotice();
+  const className =
+    state === 'loading' ? 'loading' : state === true ? 'successed' : 'failed';
+  const headerMsg =
+    state === 'loading' ? 'Loading...' : state === true ? 'Success' : 'Error';
   useEffect(() => {
+    if (state === 'loading') return;
     if (show) {
       setTimeout(() => {
         console.log('aa');
         close();
       }, 3000);
     }
-  }, [close, show]);
+  }, [close, show, state]);
   return (
     <AnimatePresence>
       {show && (
         <motion.div
-          className={`${styles.container} ${
-            isSuccessed ? styles.successed : styles.failed
-          }`}
+          className={`${styles.container} ${styles[className]}`}
           variants={variants}
           initial='initial'
           animate='animate'
           exit='exit'
         >
           <div className={styles.header}>
-            <div className={styles.result}>
-              {isSuccessed ? 'Success' : 'Error'}
-            </div>
+            <div className={styles.result}>{headerMsg}</div>
             <button onClick={close}>✕</button>
           </div>
           <div className={styles.message}>{message}</div>
@@ -55,4 +56,4 @@ const Notice: React.FC = () => {
   );
 };
 
-export default Notice;
+export default React.memo(Notice);

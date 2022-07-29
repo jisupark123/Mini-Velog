@@ -3,12 +3,6 @@
   margin-top: $nav-height;
 }
 
-@mixin desktop--main-page {
-  width: $desktop-nav-width;
-  margin: 0 auto;
-  @include page-config;
-}
-
 @mixin desktop--post-page {
   width: 768px;
   margin: 0 auto;
@@ -26,6 +20,11 @@
   align-items: center;
 }
 
+$desktop--min-width: 1025px;
+$tablet--min-width: 768px;
+$mobile--landscape-min-width: 481px;
+$mobile--min-width: 320px;
+
 @mixin desktop {
   @media (min-width: 1025px) {
     @content;
@@ -36,8 +35,21 @@
     @content;
   }
 }
+
+// 모바일 가로
+@mixin mobile-landscape {
+  @media (min-width: 481px) and (max-width: 767px) {
+    @content;
+  }
+}
 @mixin mobile {
   @media (min-width: 320px) and (max-width: 480px) {
+    @content;
+  }
+}
+
+@mixin not-desktop {
+  @media (max-width: 1024px) {
     @content;
   }
 }
@@ -73,6 +85,10 @@
   @include flex-center;
   padding: 0.8rem 1.2rem;
   font-size: 1.5rem;
+  @include btn-hover;
+}
+
+@mixin btn-hover {
   &:hover {
     transition: all 0.15s ease-in-out;
   }

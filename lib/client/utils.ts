@@ -53,3 +53,11 @@ export function getDateDiff(d1: Date | string, d2: Date | string) {
   diff /= 12;
   return `${Math.floor(diff)}년`;
 }
+
+// export const defaultAvatarId = 'df61ac37-9f33-4f43-f4f2-1fda39baa400';
+export const defaultAvatar = '/default_avatar.png';
+
+type imageVariant = 'avatar' | 'postImage';
+export function getImageUrl(id: string, variant: imageVariant) {
+  return `https://imagedelivery.net/2Kv4fRsbs6LiXFRRZ-mIJA/${id}/${variant}`;
+}

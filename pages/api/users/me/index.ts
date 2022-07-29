@@ -31,16 +31,18 @@ async function handler(
       body: { avatarId, introduction, nickname },
     } = req;
     const userId = getUserIdFromSession(user!.id);
-    if (avatarId) {
+    if (avatarId || avatarId == '') {
       await client.user.update({
         where: { id: userId },
         data: { avatar: avatarId, introduction, nickname },
       });
+      console.log(avatarId, '아바타 업데이트');
     } else {
       await client.user.update({
         where: { id: userId },
         data: { introduction, nickname },
       });
+      console.log(avatarId, '아바타 업데이트X');
     }
     return res.json({ ok: true });
   }

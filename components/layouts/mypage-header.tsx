@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import styles from './mypage-header.module.scss';
 import { AiOutlineSetting } from 'react-icons/ai';
+import { defaultAvatar, getImageUrl } from '../../lib/client/utils';
 
 type TabName = 'Dashboard' | 'Post';
 
@@ -45,13 +46,12 @@ const MypageHeader: React.FC<MypageHeaderProps> = ({
           <Image
             className={styles['user-icon']}
             src={
-              user.profileImage?.length
-                ? user.profileImage
-                : '/default-avatar.jpeg'
+              user.avatar ? getImageUrl(user.avatar, 'avatar') : defaultAvatar
             }
             alt='user-icon'
             layout='fill'
             objectFit='cover'
+            priority={true}
           ></Image>
         </div>
         <div className={styles.name}>{user.name}</div>

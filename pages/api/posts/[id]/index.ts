@@ -42,7 +42,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       session: { user },
     }: PostRequestBody = req;
 
-    await client.post.update({
+    const post = await client.post.update({
       where: { id: +postId },
       data: {
         title,
@@ -56,15 +56,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
         images: {
           deleteMany: {},
-          create: images.map((url) => ({
-            url,
+          create: images.map((imageId) => ({
+            imageId,
           })),
         },
         showLikes,
         allowComments,
       },
     });
-    return res.json({ ok: true });
+    return res.json({ ok: true, postId: post.id });
   }
 
   if (req.method === 'DELETE') {

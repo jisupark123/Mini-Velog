@@ -1,17 +1,30 @@
 .wrapper {
   background-color: $bg--gray;
-  padding-top: 5rem;
+  // padding-top: 1rem;
+  padding-bottom: 20rem;
 }
 
 .container {
-  @include desktop--main-page;
+  width: $desktop-nav-width;
+  margin: 0 auto;
+  min-height: $main-height;
+  margin-top: $nav-height;
 }
 
 .main {
+  margin-top: 10rem;
 }
 
 .posts {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
+}
+
+//////////////////////////////////////////////////////////
+
+.container {
+  @include not-desktop {
+    width: calc(100% - 3rem);
+  }
 }

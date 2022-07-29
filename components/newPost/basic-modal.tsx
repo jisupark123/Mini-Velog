@@ -2,7 +2,6 @@ import React, { ReactNode } from 'react';
 import styles from './basic-modal.module.scss';
 
 interface BasicModalProps {
-  wide?: boolean;
   header: string;
   children: ReactNode;
   backBtn?: {
@@ -15,14 +14,13 @@ interface BasicModalProps {
 }
 
 const BasicModal: React.FC<BasicModalProps> = ({
-  wide,
   header,
   children,
   backBtn,
   rightBtn,
 }) => {
   return (
-    <div className={`${styles.container} ${wide ? styles.wide : ''}`}>
+    <div className={`${styles.container}`}>
       <header className={styles.header}>
         {backBtn && (
           <div className={styles['back-btn']}>
@@ -34,7 +32,7 @@ const BasicModal: React.FC<BasicModalProps> = ({
           <button onClick={rightBtn.onClickHandler}>{rightBtn.title}</button>
         </div>
       </header>
-      {children}
+      <main className={styles.main}>{children}</main>
     </div>
   );
 };

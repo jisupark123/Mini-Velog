@@ -89,7 +89,10 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
   const user = await client.user.findUnique({
     where: { id: Number(ctx.params!.id) },
     select: {
-      posts: { include: { tags: true, comments: true } },
+      posts: {
+        include: { tags: true, comments: true },
+        orderBy: { createdAt: 'desc' },
+      },
       id: true,
       name: true,
       createdAt: true,

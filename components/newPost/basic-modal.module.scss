@@ -1,9 +1,15 @@
+$header-height: 50px;
+$main-height: 570px;
+
 .container {
   @include center-fixed;
   z-index: calc($modal-z_index + 1);
-  width: 40vw;
-  height: 80vh;
-  border-radius: 15px;
+  max-width: 570px;
+  // max-height: 700px;
+  width: 100%;
+  // height: 100%;
+  height: calc($header-height + $main-height);
+  border-radius: $basic-modal-border-radius;
   background-color: white;
 }
 
@@ -14,7 +20,7 @@
 .header {
   position: relative;
   @include flex-center;
-  height: $modal-header-height;
+  height: $header-height;
   border-bottom: 1px solid rgba($color: #000000, $alpha: 0.2);
   font-size: 1.6rem;
   font-weight: 500;
@@ -36,4 +42,11 @@
   position: absolute;
   right: 20px;
   @include flex-center;
+}
+
+.main {
+  max-width: $main-height;
+  max-height: $main-height;
+  width: 100%;
+  height: 100%;
 }

@@ -39,7 +39,7 @@ $border-radius: 5px;
     color: rgb(2, 48, 2);
   }
   .message {
-    background-color: rgb(146, 241, 146);
+    background-color: #d5fbd5;
     color: rgb(2, 48, 2);
   }
 }
@@ -51,5 +51,15 @@ $border-radius: 5px;
   .message {
     background-color: #f4e4e5;
     color: #721c24;
+  }
+}
+.loading {
+  .header {
+    background-color: #afb5ee;
+    color: $black;
+  }
+  .message {
+    background-color: #c7ccf7;
+    color: $black;
   }
 }

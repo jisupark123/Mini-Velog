@@ -1,10 +1,21 @@
+$container-width: 768px;
+$image-width: 600px;
+
 .wrapper {
   background-color: $bg--gray;
-  padding-bottom: 100px;
 }
 .container {
-  @include desktop--post-page;
+  @include page-config;
+  width: $container-width;
+  margin: 0 auto;
   padding-top: 100px;
+  padding-bottom: 30rem;
+}
+
+.post {
+  @include card-setting;
+  padding: 7rem 7rem 30rem 7rem;
+  border-radius: 1rem;
 }
 
 .header {
@@ -20,13 +31,29 @@
     .info {
       display: flex;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 2rem;
       font-size: 1.5rem;
+      .link-wrapper {
+        display: flex;
+        align-items: center;
+      }
+      .avatar {
+        position: relative;
+        width: 5rem;
+        height: 5rem;
+        margin-right: 1rem;
+        img {
+          border-radius: 100%;
+        }
+      }
       span {
         margin-right: 5px;
       }
-      .username {
+      .nickname {
         font-weight: bold;
+        &:hover {
+          text-decoration: underline;
+        }
       }
     }
     .manage {
@@ -42,10 +69,12 @@
   }
   .tags {
     display: flex;
-    align-items: center;
+    // align-items: center;
+    flex-wrap: wrap;
     .tag {
       margin-right: 0.5rem;
-      font-size: 1.3rem;
+      font-size: 1.5rem;
+      font-weight: 500;
       color: $blue;
       &:hover {
         text-decoration-line: underline;
@@ -83,16 +112,27 @@
 .main {
   margin-top: 6rem;
   margin-bottom: 150px;
+
   .contents {
     font-size: 2rem;
     line-height: 1.5;
   }
 }
 
+.image-container {
+  margin-bottom: 10rem;
+  .image-wrapper {
+    position: relative;
+    width: $image-width;
+    height: $image-width;
+    background-color: inherit;
+  }
+}
+
 .comments {
   .new-comment {
     width: 100%;
-    margin-bottom: 10rem;
+    margin: 20rem 0 20rem 0;
     .textarea-wrapper {
       @include card-setting;
       margin-bottom: 3rem;
@@ -113,7 +153,7 @@
         font-size: 1.7rem;
 
         &::placeholder {
-          // font-size: 1.3rem;
+          font-size: 1.5rem;
         }
       }
     }
@@ -144,11 +184,30 @@
 .not-allow-comment {
   @include flex-center;
   font-size: 2rem;
-  color: $gray;
+  color: $blue;
+  margin-top: 20rem;
 }
 
 .no-comments {
   @include flex-center;
   font-size: 2rem;
   color: $gray;
+  margin-top: 20rem;
+}
+
+.division-line {
+  display: flex;
+  align-items: center;
+  margin-bottom: 7rem;
+  div {
+    width: 100%;
+    border-bottom: 1px solid $btn--blue-hover;
+  }
+  span {
+    display: block;
+    white-space: nowrap;
+    margin: 0 2rem 0 2rem;
+    color: $btn--blue-hover;
+    font-size: 1.5rem;
+  }
 }

@@ -9,7 +9,7 @@
   // background-color: $bg--gray;
 }
 .nav {
-  width: $desktop-nav-width;
+  width: 1024px;
   height: 100%;
   @include flex-between;
   margin: 0 auto;
@@ -65,5 +65,13 @@
         }
       }
     }
+  }
+}
+
+/////////////////////////////////////////////////////
+
+.nav {
+  @include not-desktop {
+    width: calc(100% - 3rem);
   }
 }
