@@ -91,7 +91,7 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
     });
     if (response.ok) {
       notice.successed('삭제되었습니다.');
-      router.push('/');
+      router.push(`/users/${user!.id}/posts`);
     }
   }
 

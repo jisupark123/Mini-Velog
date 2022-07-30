@@ -103,7 +103,7 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
   });
   return {
     props: { user: JSON.parse(JSON.stringify(user)) },
-    revalidate: 10, // 10초
+    revalidate: 3, // 3초
   };
 };
 
