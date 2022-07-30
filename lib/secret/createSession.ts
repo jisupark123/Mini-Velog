@@ -4,6 +4,6 @@ export function createSession(userId: number) {
   return `userId=${userId}&rs=${randomString + time}`;
 }
 
-export function getUserIdFromSession(sessionId: number) {
+export function getUserIdFromSession(sessionId: string) {
   return +String(sessionId).split('userId=')[1].split('&')[0];
 }

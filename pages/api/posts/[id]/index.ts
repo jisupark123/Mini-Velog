@@ -40,7 +40,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         allowComments,
       },
       session: { user },
-    }: PostRequestBody = req;
+    } = req;
 
     const post = await client.post.update({
       where: { id: +postId },
@@ -50,13 +50,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         contents,
         tags: {
           deleteMany: {},
-          create: tags.map((tag) => ({
+          create: tags.map((tag: string) => ({
             tag: tag,
           })),
         },
         images: {
           deleteMany: {},
-          create: images.map((imageId) => ({
+          create: images.map((imageId: string) => ({
             imageId,
           })),
         },
