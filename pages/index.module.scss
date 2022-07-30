@@ -1,18 +1,14 @@
-.wrapper {
-  background-color: $bg--gray;
-  // padding-top: 1rem;
-  padding-bottom: 20rem;
-}
-
 .container {
-  width: $desktop-nav-width;
-  margin: 0 auto;
+  background-color: $bg--gray;
+  padding-top: 1rem;
+  padding-bottom: 20rem;
   min-height: $main-height;
   margin-top: $nav-height;
 }
 
 .main {
-  margin-top: 10rem;
+  width: $desktop-nav-width;
+  margin: 0 auto;
 }
 
 .posts {
@@ -23,7 +19,7 @@
 
 //////////////////////////////////////////////////////////
 
-.container {
+.main {
   @include not-desktop {
     width: calc(100% - 3rem);
   }

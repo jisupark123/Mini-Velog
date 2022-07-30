@@ -290,11 +290,11 @@ const MakePost: React.FC<Props> = ({ closeNewPost, update, prevPost }) => {
                 <div className={styles['image-inputs']}>
                   <div className={styles['image-icon']}></div>
                   <div className={styles['image-ment']}>
-                    <h2>사진을 추가하세요.</h2>
+                    <h2>사진을 추가하세요</h2>
                   </div>
                   <div className={styles['image-input']}>
                     <label htmlFor='image' className={styles['image-btn']}>
-                      컴퓨터에서 선택
+                      파일에서 선택
                     </label>
                     <input
                       {...register('image')}

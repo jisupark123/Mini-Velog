@@ -73,3 +73,11 @@
     }
   }
 }
+
+///////////////////////////////////////////
+
+@include not-desktop {
+  .page-header {
+    padding: 3rem 3rem 0 3rem;
+  }
+}

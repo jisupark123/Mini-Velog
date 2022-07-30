@@ -7,7 +7,7 @@
 }
 
 .container {
-  max-width: 780px;
+  max-width: 768px;
   width: 100%;
   margin: 0 auto;
   padding-top: 10rem;
@@ -106,10 +106,11 @@
     height: 5rem;
     padding-top: 0.3rem;
     span {
-      font-size: 0.7rem;
+      font-size: 1rem;
     }
     .valid {
-      color: $success;
+      // color: $success;
+      color: $blue;
     }
     .not-valid {
       color: $danger;
@@ -133,4 +134,30 @@
 
 .hidden {
   display: none;
+}
+
+///////////////////////////////////////////////
+
+@media (max-width: calc($tablet--min-width - 1px)) {
+  .container {
+    max-width: calc(100% - 3rem);
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+  .section-row {
+    h1 {
+      max-width: 10rem;
+    }
+  }
+}
+
+@media (max-width: 550px) {
+  .image-settings {
+    flex-direction: column;
+    align-items: center;
+    .user-icon {
+      margin: 0;
+      margin-bottom: 2rem;
+    }
+  }
 }

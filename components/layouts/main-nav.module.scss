@@ -5,7 +5,7 @@
   z-index: $main-nav-z_index;
   width: 100%;
   height: $nav-height;
-  background-color: $white;
+  background-color: $bg--element1;
   // background-color: $bg--gray;
 }
 .nav {
@@ -70,8 +70,9 @@
 
 /////////////////////////////////////////////////////
 
-.nav {
-  @include not-desktop {
+@include not-desktop {
+  .nav {
     width: calc(100% - 3rem);
+    padding: 0 1rem 0 1rem;
   }
 }

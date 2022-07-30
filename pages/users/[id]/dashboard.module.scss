@@ -35,3 +35,13 @@
     }
   }
 }
+
+/////////////////////////////////////////////
+
+@include not-desktop {
+  .page-content {
+    .container {
+      max-width: calc(100% - 3rem);
+    }
+  }
+}

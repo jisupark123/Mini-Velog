@@ -186,38 +186,31 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
           <div className={styles.post}>
             <div className={styles.header}>
               <h1>{post.title}</h1>
-              <div className={styles.metadata}>
-                <div className={styles.info}>
-                  <Link href={`/users/${post.userId}`}>
-                    <a className={styles['link-wrapper']}>
-                      <div className={styles.avatar}>
-                        <Image
-                          src={
-                            post.user.avatar
-                              ? getImageUrl(post.user.avatar, 'avatar')
-                              : defaultAvatar
-                          }
-                          alt='avatar'
-                          layout='fill'
-                        />
-                      </div>
-                      <span className={styles.nickname}>
-                        {post.user.nickname || post.user.name}
-                      </span>
-                    </a>
-                  </Link>
-                  <span className={styles.separator}>&#183;</span>
-                  <span className={styles.date}>{`${date.getFullYear()}년 ${
-                    date.getMonth() + 1
-                  }월 ${date.getDate()}일`}</span>
-                </div>
-                {post.userId === user?.id && (
-                  <div className={styles.manage}>
-                    <button onClick={handleUpdatePost}>수정</button>
-                    <button onClick={showDeleteConfirm}>삭제</button>
-                  </div>
-                )}
+              <div className={styles.info}>
+                <Link href={`/users/${post.userId}`}>
+                  <a className={styles['link-wrapper']}>
+                    <div className={styles.avatar}>
+                      <Image
+                        src={
+                          post.user.avatar
+                            ? getImageUrl(post.user.avatar, 'avatar')
+                            : defaultAvatar
+                        }
+                        alt='avatar'
+                        layout='fill'
+                      />
+                    </div>
+                    <span className={styles.nickname}>
+                      {post.user.nickname || post.user.name}
+                    </span>
+                  </a>
+                </Link>
+                <span className={styles.separator}>&#183;</span>
+                <span className={styles.date}>{`${date.getFullYear()}년 ${
+                  date.getMonth() + 1
+                }월 ${date.getDate()}일`}</span>
               </div>
+
               <div className={styles.tags}>
                 {post.tags.map((tag, idx) => (
                   <Link key={idx} href='#'>
@@ -225,6 +218,12 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
                   </Link>
                 ))}
               </div>
+              {post.userId === user?.id && (
+                <div className={styles.manage}>
+                  <button onClick={handleUpdatePost}>수정</button>
+                  <button onClick={showDeleteConfirm}>삭제</button>
+                </div>
+              )}
             </div>
             {/* <div className={styles.fake}>
             <div className={styles['remote-controll']}>

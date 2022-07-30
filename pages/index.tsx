@@ -18,27 +18,25 @@ interface Post {
 const Home: NextPage<{ posts: Post[] }> = ({ posts }) => {
   return (
     <Layout>
-      <div className={styles.wrapper}>
-        <div className={styles.container}>
-          <main className={styles.main}>
-            <div className={styles.posts}>
-              {posts.map((post, index) => (
-                <PostCard
-                  key={index}
-                  id={post.id}
-                  userId={post.user.id}
-                  title={post.title}
-                  subTitle={post.subTitle}
-                  nickname={post.user.nickname || post.user.name}
-                  createdAt={post.createdAt}
-                  likes={post.likes}
-                  commentCount={post.comments.length}
-                  avatar={post.user.avatar || ''}
-                />
-              ))}
-            </div>
-          </main>
-        </div>
+      <div className={styles.container}>
+        <main className={styles.main}>
+          <div className={styles.posts}>
+            {posts.map((post, index) => (
+              <PostCard
+                key={index}
+                id={post.id}
+                userId={post.user.id}
+                title={post.title}
+                subTitle={post.subTitle}
+                nickname={post.user.nickname || post.user.name}
+                createdAt={post.createdAt}
+                likes={post.likes}
+                commentCount={post.comments.length}
+                avatar={post.user.avatar || ''}
+              />
+            ))}
+          </div>
+        </main>
       </div>
     </Layout>
   );

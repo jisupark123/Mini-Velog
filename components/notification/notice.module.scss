@@ -63,3 +63,13 @@ $border-radius: 5px;
     color: $black;
   }
 }
+
+//////////////////////////////////////////////////
+
+@include mobile {
+  .container {
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+}
