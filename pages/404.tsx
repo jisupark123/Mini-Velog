@@ -8,7 +8,7 @@ const PageNotFound = () => {
     <Layout>
       <div className={styles.container}>
         <h1>404 Not Found</h1>
-        <Link href={'/login'}>
+        <Link href={'/'}>
           <a>홈으로</a>
         </Link>
       </div>
