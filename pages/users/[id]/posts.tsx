@@ -33,7 +33,7 @@ const Posts: React.FC<PostsProps> = ({ user }) => {
         <div className={styles.container}>
           {user.posts.slice(0, 10).map((post) => (
             <section key={post.id} className={styles['post-card']}>
-              <Link href={`posts/${post.id}`}>
+              <Link href={`/posts/${post.id}`}>
                 <a className={styles.title}>{post.title}</a>
               </Link>
               <div className={styles.subTitle}>
