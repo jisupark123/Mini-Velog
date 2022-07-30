@@ -4,7 +4,10 @@ import styles from './login.module.scss';
 const Login = () => {
   function kakaoLogin() {
     window.Kakao.Auth.authorize({
-      redirectUri: 'http://localhost:3000/kakao',
+      redirectUri:
+        process.env.NODE_ENV === 'production'
+          ? 'https://mini-velog.vercel.app/kakao'
+          : 'http://localhost:3000/kakao',
     });
   }
 
