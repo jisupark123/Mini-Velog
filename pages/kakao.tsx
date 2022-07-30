@@ -1,11 +1,9 @@
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { useCallback, useContext, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import Layout from '../components/layouts/layout';
-import MainNav from '../components/layouts/main-nav';
 import LoadingSvg from '../components/svg/loading-svg';
 import useUser from '../lib/client/useUser';
-import UserCtx from '../store/user-context';
 import styles from './kakao.module.scss';
 
 interface ResponseType {
