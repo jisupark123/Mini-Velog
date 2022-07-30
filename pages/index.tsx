@@ -64,6 +64,7 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     });
     return {
       props: { posts: JSON.parse(JSON.stringify(posts)) },
+      revalidate: 5, // 5초마다 변경
     };
   } catch (error) {
     console.log('catch:', error);
@@ -80,7 +81,6 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
           },
         ],
       },
-      revalidate: 10, // 10초마다 변경
     };
   }
 };
