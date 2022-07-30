@@ -55,6 +55,8 @@ const Dashboard: NextPage<DashboardProps> = ({ user }) => {
   );
 };
 
+export default Dashboard;
+
 export const getStaticPaths: GetStaticPaths = async () => {
   const users = await client.user.findMany({ select: { id: true } });
 
@@ -104,4 +106,3 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
 //     props: { user: JSON.parse(JSON.stringify(user)) },
 //   };
 // };
-// export default Dashboard;
