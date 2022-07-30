@@ -35,8 +35,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 
-# secret function
-/lib/secret/*
+# # secret function
+# /lib/secret/*
 
 # useless
 
