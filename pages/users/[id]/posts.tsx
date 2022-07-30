@@ -1,5 +1,5 @@
 import { Comment, Post, Tag, User } from '@prisma/client';
-import { GetStaticPaths, GetStaticProps } from 'next';
+import { GetServerSideProps, GetStaticPaths, GetStaticProps } from 'next';
 import Link from 'next/link';
 import React from 'react';
 import Layout from '../../../components/layouts/layout';
@@ -74,18 +74,39 @@ const Posts: React.FC<PostsProps> = ({ user }) => {
 
 export default Posts;
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const users = await client.user.findMany({ select: { id: true } });
+// export const getStaticPaths: GetStaticPaths = async () => {
+//   const users = await client.user.findMany({ select: { id: true } });
 
-  return {
-    fallback: 'blocking',
-    paths: users.map((user) => ({
-      params: { id: user.id.toString() },
-    })),
-  };
-};
+//   return {
+//     fallback: 'blocking',
+//     paths: users.map((user) => ({
+//       params: { id: user.id.toString() },
+//     })),
+//   };
+// };
 
-export const getStaticProps: GetStaticProps = async (ctx) => {
+// export const getStaticProps: GetStaticProps = async (ctx) => {
+//   const user = await client.user.findUnique({
+//     where: { id: Number(ctx.params!.id) },
+//     select: {
+//       posts: {
+//         include: { tags: true, comments: true },
+//         orderBy: { createdAt: 'desc' },
+//       },
+//       id: true,
+//       name: true,
+//       createdAt: true,
+//       loggedFrom: true,
+//       avatar: true,
+//       introduction: true,
+//     },
+//   });
+//   return {
+//     props: { user: JSON.parse(JSON.stringify(user)) },
+//   };
+// };
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const user = await client.user.findUnique({
     where: { id: Number(ctx.params!.id) },
     select: {

@@ -5,10 +5,9 @@ $main-height: 570px;
   @include center-fixed;
   z-index: calc($modal-z_index + 1);
   max-width: 570px;
-  // max-height: 700px;
   width: 100%;
-  // height: 100%;
-  height: calc($header-height + $main-height);
+  max-height: calc($header-height + $main-height);
+  height: 100%;
   border-radius: $basic-modal-border-radius;
   background-color: white;
 }

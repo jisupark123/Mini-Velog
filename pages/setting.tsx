@@ -23,7 +23,7 @@ let avatarDeleted = false;
 
 const Setting: NextPage = () => {
   const { user, mutate: refreshUser } = useUser();
-  const { successed, failed } = useNotice();
+  const { successed, failed, loading: noticeLoading } = useNotice();
   const {
     register,
     watch,
@@ -92,6 +92,7 @@ const Setting: NextPage = () => {
       return;
     }
     if (!nicknameCheck(nickname)) return;
+    noticeLoading('업로드 중입니다..');
 
     // 이미지가 있다면
     if (avatar?.length && user) {

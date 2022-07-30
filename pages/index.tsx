@@ -1,5 +1,5 @@
 import { Comment, User } from '@prisma/client';
-import type { GetStaticProps, NextPage } from 'next';
+import type { GetServerSideProps, GetStaticProps, NextPage } from 'next';
 import Layout from '../components/layouts/layout';
 import PostCard from '../components/ui/post-card';
 import client from '../lib/server/client';
@@ -80,6 +80,47 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
           },
         ],
       },
+      revalidate: 10, // 10초마다 변경
     };
   }
 };
+
+// export const getServerSideProps: GetServerSideProps = async (ctx) => {
+//   try {
+//     const posts = await client.post.findMany({
+//       select: {
+//         user: {
+//           select: { id: true, name: true, nickname: true, avatar: true },
+//         },
+//         id: true,
+//         createdAt: true,
+//         title: true,
+//         subTitle: true,
+//         comments: true,
+//         likes: true,
+//       },
+//       orderBy: {
+//         createdAt: 'desc',
+//       },
+//     });
+//     return {
+//       props: { posts: JSON.parse(JSON.stringify(posts)) },
+//     };
+//   } catch (error) {
+//     console.log('catch:', error);
+//     return {
+//       props: {
+//         posts: [
+//           {
+//             user: 'abc',
+//             createdAt: '2022-07-05',
+//             title: '뭐하냐',
+//             subTitle: '뭐긴뭐야',
+//             comments: [1, 2, 3],
+//             likes: 5,
+//           },
+//         ],
+//       },
+//     };
+//   }
+// };
