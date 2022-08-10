@@ -375,6 +375,7 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
 
       tags: true,
       images: true,
+      // comments: true,
       comments: {
         include: {
           user: {
@@ -388,6 +389,7 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
   // const response: postDetailResponseType = await fetch(
   //   `/api/posts/${ctx.params!.id}`
   // ).then((res) => res.json());
+  console.log(post);
 
   return {
     props: { post: JSON.parse(JSON.stringify(post)) },

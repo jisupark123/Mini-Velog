@@ -1,8 +1,19 @@
+import { Post, User } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getUserIdFromSession } from '../../../lib/secret/createSession';
 import client from '../../../lib/server/client';
 import withHandler, { ResponseType } from '../../../lib/server/withHandler';
 import { withApiSession } from '../../../lib/server/withSession';
+
+interface WithPost extends Post {
+  user: User;
+  comments: Comment[];
+}
+
+export interface GetPostsResponse extends ResponseType {
+  ok: boolean;
+  posts: WithPost[];
+}
 
 export interface UploadPost {
   title: string;
@@ -71,7 +82,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'GET') {
     const posts = await client.post.findMany({
       select: {
-        user: { select: { name: true, avatar: true } },
+        user: {
+          select: { id: true, name: true, nickname: true, avatar: true },
+        },
         id: true,
         createdAt: true,
         title: true,
@@ -83,6 +96,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         createdAt: 'desc',
       },
     });
+    return res.json({ ok: true, posts });
   }
 };
 

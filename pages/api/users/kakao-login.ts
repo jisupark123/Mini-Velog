@@ -5,6 +5,10 @@ import client from '../../../lib/server/client';
 import withHandler, { ResponseType } from '../../../lib/server/withHandler';
 import { withApiSession } from '../../../lib/server/withSession';
 
+export interface KakaoLoginResponse extends ResponseType {
+  firstLogin: boolean;
+}
+
 interface TokenResponse {
   token_type: string;
   access_token: string;
@@ -104,19 +108,22 @@ const handler = async (
     id: kakaoId,
     properties: { nickname },
   } = userInfo;
-  const user = await getUser(kakaoId);
+  let user = await getUser(kakaoId);
   let newSessionId;
+  let firstLogin = false;
 
   if (user) {
     newSessionId = createSession(user.id);
     await createOrUpdateSession(user.id, newSessionId);
   } else {
     newSessionId = await createUser(userInfo);
+    firstLogin = true;
   }
 
-  console.log('success!');
   req.session.user = { id: newSessionId };
   await req.session.save();
-  return res.json({ ok: true });
+  console.log('firstLogin', firstLogin);
+
+  return res.json({ ok: true, firstLogin });
 };
 export default withApiSession(withHandler({ methods: ['POST'], handler }));
