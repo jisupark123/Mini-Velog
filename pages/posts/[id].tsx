@@ -17,6 +17,7 @@ import { useNotice } from '../../store/notice-context';
 import { useConfirm } from '../../store/confirm-context';
 import { defaultAvatar, getImageUrl } from '../../lib/client/utils';
 import Image from 'next/image';
+import useSWR from 'swr';
 
 interface CommentWithUser extends Comment {
   user: User;
@@ -51,6 +52,7 @@ const PostDetail: NextPage<PostDetailProps> = ({ post }) => {
       allowComments: post.allowComments,
     },
   };
+  // const {} = useSWR();
   const router = useRouter();
   const notice = useNotice();
   const { user } = useUser();

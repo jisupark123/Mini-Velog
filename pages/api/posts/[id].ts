@@ -1,9 +1,9 @@
-import { PostRequestBody } from './../index';
 import { Post } from '@prisma/client';
 import { NextApiRequest, NextApiResponse } from 'next';
-import client from '../../../../lib/server/client';
-import withHandler, { ResponseType } from '../../../../lib/server/withHandler';
-import { withApiSession } from '../../../../lib/server/withSession';
+
+import withHandler, { ResponseType } from '../../../lib/server/withHandler';
+import client from '../../../lib/server/client';
+import { withApiSession } from '../../../lib/server/withSession';
 
 export interface PostDetailResponse extends ResponseType {
   post: Post;

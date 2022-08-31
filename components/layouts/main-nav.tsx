@@ -49,7 +49,7 @@ const MainNav: React.FC<MainNavProps> = ({ onlyLogo = false }) => {
       <div className={styles.nav}>
         <div className={styles.logo}>
           <Link href='/'>
-            <a>큰거온다</a>
+            <a>Mini Velog</a>
           </Link>
         </div>
         {!onlyLogo && (
