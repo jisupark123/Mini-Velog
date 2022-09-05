@@ -27,6 +27,7 @@ function App({ Component, pageProps }: AppProps) {
       value={{
         fetcher: (url: string) =>
           fetch(url).then((response) => response.json()),
+        refreshInterval: 3000,
       }}
     >
       <RecoilRoot>
