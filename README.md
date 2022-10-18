@@ -1,5 +1,7 @@
 # 미니 갤러리
 
+https://mini-velog.vercel.app
+
 facebook 같이 다양한 기능과 velog 같이 깔끔한 UI를 가진 미니 SNS를 만드는 것이 목표다.
 
 ## Detail
